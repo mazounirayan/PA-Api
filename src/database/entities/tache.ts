@@ -18,10 +18,11 @@ export class Tache {
     description: string
 
     @Column()
-    dateDebut: Date;
+    dateDebut: Date
 
     @Column()
-    dateFin: Date;
+    dateFin: Date
+
 
     @Column({
         type: "enum",

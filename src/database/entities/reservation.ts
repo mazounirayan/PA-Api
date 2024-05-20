@@ -1,14 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne} from "typeorm"
 import "reflect-metadata"
 import { User } from "./user"
-import { Evenement } from "./evenement"
 import { Ressource } from "./ressource"
 
 
-export enum StatutTache {
-    Fini = "Fini",
-    EnCours = "En cours"
-}
 
 @Entity()
 export class Reservation {
@@ -33,7 +28,7 @@ export class Reservation {
 
 
 
-    constructor(id: number, description:string,dateDebut:Date,dateFin:Date,statut:StatutTache,ressource:Ressource,user:User) {
+    constructor(id: number, description:string,dateDebut:Date,dateFin:Date,ressource:Ressource,user:User) {
         this.id = id;
         this.description = description;
         this.dateDebut = dateDebut;

@@ -2,27 +2,72 @@ import Joi from "joi";
 import { User, UserRole } from "../../database/entities/user";
 
 export const createUserValidation = Joi.object<CreateUserValidationRequest>({
-    nom: Joi.string().max(100).required(),
-    prenom: Joi.string().max(100).required(),
+    nom: Joi.string().required(),
+    prenom: Joi.string().required(),
     email: Joi.string().email().required(),
-    motDePasse: Joi.string().min(8).optional(),
-    role: Joi.string().valid('Visiteur', 'Administrateur', 'Adherent').required(),
-    estBenevole: Joi.boolean().optional(),
-    parrain: Joi.number().integer().positive().allow(null).optional(),
-}).options({ abortEarly: false });
-
+    motDePasse: Joi.string().required(),
+    role: Joi.string().valid(...Object.values(UserRole)).required(),
+    dateInscription: Joi.date().required(),
+    estBenevole: Joi.boolean().required()
+});
 
 export interface CreateUserValidationRequest {
-    nom: string;
-    prenom: string;
-    email: string;
-    motDePasse?: string;
-    role: UserRole;
-    estBenevole?: boolean;
-    parrain?: User;
+    nom: string
+    prenom: string
+    email: string
+    motDePasse: string
+    role: UserRole
+    dateInscription: Date
+    estBenevole: boolean
 }
 
+export const userIdValidation = Joi.object<UserIdRequest>({
+    id: Joi.number().required(),
+});
 
+export interface UserIdRequest {
+    id: number
+}
+
+export const updateUserValidation = Joi.object<UpdateUserRequest>({
+    id: Joi.number().required(),
+    nom: Joi.string().optional(),
+    prenom: Joi.string().optional(),
+    email: Joi.string().email().optional(),
+    motDePasse: Joi.string().optional(),
+    role: Joi.string().valid(...Object.values(UserRole)).optional(),
+    estBenevole: Joi.boolean().optional()
+});
+
+export interface UpdateUserRequest {
+    id: number
+    nom?: string
+    prenom?: string
+    email?: string
+    motDePasse?: string
+    role?: UserRole
+    estBenevole?: boolean
+}
+
+export const listUserValidation = Joi.object<ListUserRequest>({
+    page: Joi.number().min(1).optional(),
+    limit: Joi.number().min(1).optional(),
+    nom: Joi.string().optional(),
+    prenom: Joi.string().optional(),
+    email: Joi.string().email().optional(),
+    role: Joi.string().valid(...Object.values(UserRole)).optional(),
+    estBenevole: Joi.boolean().optional()
+});
+
+export interface ListUserRequest {
+    page: number
+    limit: number
+    nom?: string
+    prenom?: string
+    email?: string
+    role?: UserRole
+    estBenevole?: boolean
+}
 
 export const LoginUserValidation = Joi.object<LoginUserValidationRequest>({
     email: Joi.string().email().required(),
@@ -33,39 +78,3 @@ export interface LoginUserValidationRequest {
     email: string
     motDePasse: string
 }
-
-
-export const listUserValidation = Joi.object<ListUserRequest>({
-    page: Joi.number().min(1).optional(),
-    limit: Joi.number().min(1).optional(),
-})
-
-export interface ListUserRequest {
-    page?: number
-    limit?: number
-}
-
-
-
-export const updateUserValidation = Joi.object<UpdateUserRequest>({
-    id: Joi.number().required(),
-    nom: Joi.string().max(100).optional(),
-    prenom: Joi.string().max(100).optional(),
-    email: Joi.string().email().optional(),
-    motDePasse: Joi.string().min(8).optional(),
-    role: Joi.string().valid('Visiteur', 'Administrateur', 'Adherent').optional(),
-    estBenevole: Joi.boolean().optional(),
-    parrain: Joi.number().integer().positive().allow(null).optional()
-})
-
-export interface UpdateUserRequest {
-    id: number
-    nom?: string;
-    prenom?: string;
-    email?: string;
-    motDePasse?: string;
-    role?: UserRole;
-    estBenevole?: boolean;
-    parrain?: User;
-}
-

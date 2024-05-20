@@ -6,7 +6,7 @@ export const createRessourceValidation = Joi.object<CreateRessourceValidationReq
     type: Joi.string().valid('Salle', 'Matériel', 'Alimentaire').required(),
     statut: Joi.string().valid('Disponible', 'Réservé').required(),
     emplacement: Joi.string().required()
-});
+}).options({ abortEarly: false })
 
 export interface CreateRessourceValidationRequest {
     nom: string

@@ -3,7 +3,6 @@ CREATE DATABASE ECAF;
 
 USE ECAF;
 
-
 CREATE TABLE user (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
@@ -14,7 +13,7 @@ CREATE TABLE user (
     dateInscription DATE NOT NULL,
     estBenevole BOOLEAN DEFAULT FALSE,
     parrainId INT,
-    FOREIGN KEY (parrainId) REFERENCES user(id)
+    FOREIGN KEY (parrainId) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE fonctionnalite (
@@ -27,8 +26,8 @@ CREATE TABLE droit (
     id int AUTO_INCREMENT,
     userId INT,
     fonctionnaliteId INT,
-    FOREIGN KEY (userId) REFERENCES user(id),
-    FOREIGN KEY (fonctionnaliteId) REFERENCES fonctionnalite(id),
+    FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (fonctionnaliteId) REFERENCES fonctionnalite(id) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (id, userId, fonctionnaliteId)
 );
 
@@ -39,7 +38,7 @@ CREATE TABLE tache (
     dateFin DATETIME,
     statut ENUM('En cours', 'Fini') NOT NULL,
     responsableId INT,
-    FOREIGN KEY (responsableId) REFERENCES user(id)
+    FOREIGN KEY (responsableId) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE evenement (
@@ -47,8 +46,7 @@ CREATE TABLE evenement (
     nom VARCHAR(255) NOT NULL,
     date DATETIME NOT NULL,
     description TEXT NOT NULL,
-    lieu VARCHAR(255) NOT NULL,
-    estProposition BOOLEAN NOT NULL
+    lieu VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE inscription (
@@ -56,8 +54,8 @@ CREATE TABLE inscription (
     userId INT NOT NULL,
     eventId INT NOT NULL,
     statut VARCHAR(50) NOT NULL,
-    FOREIGN KEY (userId) REFERENCES user(id),
-    FOREIGN KEY (eventId) REFERENCES evenement(id)
+    FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (eventId) REFERENCES evenement(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE ag (
@@ -73,8 +71,8 @@ CREATE TABLE participationAG (
     id INT AUTO_INCREMENT PRIMARY KEY,
     userId INT NOT NULL,
     agId INT NOT NULL,
-    FOREIGN KEY (userId) REFERENCES user(id),
-    FOREIGN KEY (agId) REFERENCES ag(id)
+    FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (agId) REFERENCES ag(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE proposition (
@@ -82,7 +80,7 @@ CREATE TABLE proposition (
     description TEXT NOT NULL,
     type VARCHAR(50) NOT NULL,
     agId INT NOT NULL,
-    FOREIGN KEY (agId) REFERENCES ag(id)
+    FOREIGN KEY (agId) REFERENCES ag(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE vote (
@@ -90,19 +88,19 @@ CREATE TABLE vote (
     propositionId INT NOT NULL,
     userId INT NOT NULL,
     choix VARCHAR(255) NOT NULL,
-    FOREIGN KEY (propositionId) REFERENCES proposition(id),
-    FOREIGN KEY (userId) REFERENCES user(id)
+    FOREIGN KEY (propositionId) REFERENCES proposition(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE transaction (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    montant DECIMAL(10, 2) NOT NULL,
+    montant FLOAT NOT NULL,
     type ENUM('Don', 'Cotisation', 'Paiement evenement', 'Inscription') NOT NULL,
-    date DATETIME NOT NULL,
+    dateTransaction TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     userId INT NOT NULL,
-    eventId INT DEFAULT NULL,
-    FOREIGN KEY (eventId) REFERENCES evenement(id),
-    FOREIGN KEY (userId) REFERENCES user(id)
+    evenementId INT DEFAULT NULL,
+    FOREIGN KEY (evenementId) REFERENCES evenement(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE document (
@@ -111,7 +109,7 @@ CREATE TABLE document (
     type VARCHAR(50) NOT NULL,
     cheminAcces TEXT NOT NULL,
     userId INT,
-    FOREIGN KEY (userId) REFERENCES user(id)
+    FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE ressource (
@@ -129,12 +127,59 @@ CREATE TABLE reservation (
     description TEXT NOT NULL,
     ressourceId INT NOT NULL,
     userId INT NOT NULL,
-    FOREIGN KEY (ressourceId) REFERENCES ressource(id),
-    FOREIGN KEY (userId) REFERENCES user(id)
+    FOREIGN KEY (ressourceId) REFERENCES ressource(id) ON DELETE CASCADE ON UPDATE CASCADE, 
+    FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE token (
     id INT AUTO_INCREMENT PRIMARY KEY,
     token VARCHAR(255) NOT NULL,
-    userId INT REFERENCES user(id)
+    userId INT REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE demande(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    type ENUM('Projet','Evénement','Parrainage','Autre'),
+    dateDemande TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    statut ENUM('En attente','Acceptée','Refusée') DEFAULT 'En attente',
+    userId INT NOT NULL,
+    FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE evenement_demande (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    demandeId INT,
+    nom VARCHAR(255) NOT NULL,
+    date DATETIME NOT NULL,
+    description TEXT NOT NULL,
+    lieu VARCHAR(255) NOT NULL,
+    FOREIGN KEY (demandeId) REFERENCES demande(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+CREATE TABLE aide_projet_demande (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    demandeId INT,
+    nom VARCHAR(255),
+    descriptionProjet TEXT,
+    budget FLOAT DEFAULT 0.0,
+    deadline DATETIME,
+    FOREIGN KEY (demandeId) REFERENCES demande(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE parrainage_demande (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    parrainId INT,
+    demandeId INT,
+    detailsParrainage TEXT,
+    FOREIGN KEY (parrainId) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (demandeId) REFERENCES demande(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE aide_projet(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(255),
+    descriptionProjet TEXT,
+    budget FLOAT DEFAULT 0.0,
+    deadline DATETIME
 );

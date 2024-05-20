@@ -8,7 +8,7 @@ export const createReservationValidation = Joi.object<CreateReservationValidatio
     description: Joi.string().required(),
     ressource: Joi.number().required(),
     user: Joi.number().required()
-});
+}).options({ abortEarly: false })
 
 export interface CreateReservationValidationRequest {
     dateDebut: Date;

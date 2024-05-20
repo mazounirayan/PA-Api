@@ -16,6 +16,14 @@ export class Transaction {
     @PrimaryGeneratedColumn()
     id: number
 
+    @ManyToOne(() => User, user => user.transactions)
+    user: User
+
+
+    @ManyToOne(() => Evenement, evenement => evenement.transactions)
+    evenement:Evenement
+
+
     @Column()
     montant: number
 
@@ -26,20 +34,14 @@ export class Transaction {
     type: TypeTransaction;
 
     @CreateDateColumn({type: "datetime"})
-    date:Date
+    dateTransaction:Date
     
-    @ManyToOne(() => User, user => user.transactions)
-    user: User
 
-
-    @ManyToOne(() => Evenement, evenement => evenement.transactions)
-    evenement:Evenement
-
-    constructor(id: number, montant:number,type:TypeTransaction,date:Date,user:User,evenement:Evenement) {
+    constructor(id: number, montant:number,type:TypeTransaction,dateTransaction:Date,user:User,evenement:Evenement) {
         this.id = id;
         this.montant = montant;
         this.type = type;
-        this.date = date;
+        this.dateTransaction = dateTransaction;
         this.user = user;
         this.evenement = evenement;
     }

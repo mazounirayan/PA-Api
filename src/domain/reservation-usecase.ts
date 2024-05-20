@@ -1,5 +1,5 @@
-import {DataSource, SelectQueryBuilder } from "typeorm";
-import { Ressource, TypeRessource, TypeStatut } from "../database/entities/ressource";
+import {DataSource } from "typeorm";
+import { Ressource } from "../database/entities/ressource";
 import { Reservation } from "../database/entities/reservation";
 import { User } from "../database/entities/user";
 

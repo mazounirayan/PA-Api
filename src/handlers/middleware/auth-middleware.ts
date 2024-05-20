@@ -32,7 +32,7 @@ export const authMiddlewareAll = async (req: Request, res: Response, next: NextF
         return res.status(403).json({"error": "Access Denied: User role required"});
     }
     
-    const secret = process.env.JWT_SECRET ?? "azerty"
+    const secret = process.env.JWT_SECRET ?? ""
 
     verify(token, secret, (err, user) => {
         if (err) return res.status(403).json({"error": "Access Forbidden"});
@@ -69,7 +69,7 @@ export const authMiddlewareAdminstrateur = async (req: Request, res: Response, n
         return res.status(403).json({"error": "Access Denied: Administrator role required"});
     }
     
-    const secret = process.env.JWT_SECRET ?? "azerty"
+    const secret = process.env.JWT_SECRET ?? ""
 
     verify(token, secret, (err, user) => {
         if (err) return res.status(403).json({"error": "Access Forbidden"});
@@ -104,7 +104,7 @@ export const authMiddlewareAdherent = async (req: Request, res: Response, next: 
         return res.status(403).json({"error": "Access Denied: User role required"});
     }
     
-    const secret = process.env.JWT_SECRET ?? "azerty"
+    const secret = process.env.JWT_SECRET ?? ""
 
     verify(token, secret, (err, user) => {
         if (err) return res.status(403).json({"error": "Access Forbidden"});

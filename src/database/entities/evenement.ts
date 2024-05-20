@@ -20,25 +20,19 @@ export class Evenement {
     @Column()
     lieu:string
 
-    @Column()
-    estProposition:boolean
 
     @OneToMany(() => Transaction, transactions => transactions.evenement)
     transactions: Transaction[]
 
 
-    constructor(id: number, nom:string,date:Date,description:string,lieu:string,estProposition:boolean, transactions:Transaction[]) {
+    constructor(id: number, nom:string,date:Date,description:string,lieu:string, transactions:Transaction[]) {
         this.id = id;
         this.nom = nom;
         this.date = date;
         this.description = description;
         this.lieu = lieu;
-        this.estProposition = estProposition;
         this.transactions = transactions
     }
-
-
-
 
 
 }

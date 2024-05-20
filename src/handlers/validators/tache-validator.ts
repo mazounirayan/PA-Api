@@ -9,7 +9,7 @@ export const createTacheValidation = Joi.object<CreateTacheValidationRequest>({
     description: Joi.string().required(),
     responsable: Joi.number().required(),
     statut: Joi.string().valid('Fini', 'En cours').required(),
-});
+}).options({ abortEarly: false })
 
 export interface CreateTacheValidationRequest {
     description: string

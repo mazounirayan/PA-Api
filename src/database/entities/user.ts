@@ -4,6 +4,9 @@ import "reflect-metadata"
 import { Transaction } from "./transaction"
 import { Tache } from "./tache"
 import { Reservation } from "./reservation"
+import { Demande } from "./demande"
+import { EvenementDemande } from "./evenementDemande"
+import { ParrainageDemande } from "./parrainageDemande"
 
 export enum UserRole {
     Visiteur = "Visiteur",
@@ -62,8 +65,15 @@ export class User {
     @OneToMany(() => Token, token => token.user)
     tokens: Token[];
 
+    @OneToMany(() => Demande, demande => demande.user)
+    demandes: Demande[];
 
-    constructor(id: number, nom:string, prenom:string,email: string ,motDePasse: string, role: UserRole, dateInscription:Date, estBenevole: boolean,parrain:User, parraine:User[],tokens: Token[], transactions: Transaction[],taches: Tache[], reservations: Reservation[]) {
+    @OneToMany(() => ParrainageDemande, parrainageDemande => parrainageDemande.demande)
+    parrainageDemandes: ParrainageDemande[];
+
+
+
+    constructor(id: number, nom:string, prenom:string,email: string ,motDePasse: string, role: UserRole, dateInscription:Date, estBenevole: boolean,parrain:User, parraine:User[],tokens: Token[], transactions: Transaction[],taches: Tache[], reservations: Reservation[], demandes: Demande[], parrainageDemandes:ParrainageDemande[]) {
         this.id = id;
         this.nom = nom;
         this.prenom = prenom;
@@ -78,5 +88,8 @@ export class User {
         this.taches = taches;
         this.reservations = reservations;
         this.tokens = tokens;
+        this.demandes = demandes
+        this.parrainageDemandes = parrainageDemandes
+
     }
 }

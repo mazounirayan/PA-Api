@@ -5,6 +5,12 @@ import { UserHandler } from "./users/user";
 import { RessourceHandler } from "./ressource";
 import { ReservationHandler } from "./reservation";
 import { TacheHandler } from "./tache";
+import { TransactionHandler } from "./transaction";
+import { ParrainageDemandeHandler } from "./parrainageDemande";
+import { DemandeHandler } from "./demande";
+import { AideProjetDemandeHandler } from "./aideProjetDemande";
+import { EvenementHandler } from "./evenement";
+import { EvenementDemandeHandler } from "./evenementDemande";
 
 
 export const initRoutes = (app: express.Express) => {
@@ -19,5 +25,11 @@ export const initRoutes = (app: express.Express) => {
     RessourceHandler(app)
     ReservationHandler(app)
     TacheHandler(app)
+    TransactionHandler(app)
+    ParrainageDemandeHandler(app)
+    DemandeHandler(app)
+    AideProjetDemandeHandler(app)
+    EvenementHandler(app)
+    EvenementDemandeHandler(app)
     app.use(invalidPathHandler);
 }
