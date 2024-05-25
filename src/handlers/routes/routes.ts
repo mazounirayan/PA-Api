@@ -11,6 +11,7 @@ import { DemandeHandler } from "./demande";
 import { AideProjetDemandeHandler } from "./aideProjetDemande";
 import { EvenementHandler } from "./evenement";
 import { EvenementDemandeHandler } from "./evenementDemande";
+import { AzureBlobService } from "./azureBlobService";
 
 
 export const initRoutes = (app: express.Express) => {
@@ -31,5 +32,6 @@ export const initRoutes = (app: express.Express) => {
     AideProjetDemandeHandler(app)
     EvenementHandler(app)
     EvenementDemandeHandler(app)
+    AzureBlobService(app)
     app.use(invalidPathHandler);
 }
