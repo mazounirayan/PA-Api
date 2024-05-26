@@ -40,3 +40,10 @@ export async function uploadBlob(blobName: string, buffer: Buffer, mimeType: str
     blobHTTPHeaders: { blobContentType: mimeType }
   });
 }
+
+export async function deleteBlob(blobName: string): Promise<void> {
+  const containerClient = blobServiceClient.getContainerClient(containerName);
+  const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+
+  await blockBlobClient.delete();
+}

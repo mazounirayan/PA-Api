@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { Token } from '../../database/entities/token';
-import { generateSasToken, uploadBlob } from '../../domain/azureBlobService-usecase';
+import { deleteBlob, generateSasToken, uploadBlob } from '../../domain/azureBlobService-usecase';
 import { AppDataSource } from '../../database/database';
 import { authMiddlewareAdminstrateur } from '../middleware/auth-middleware';
 import { User } from '../../database/entities/user';
@@ -15,8 +15,12 @@ export const AzureBlobService = (app: express.Express) => {
         const tokenRepo = AppDataSource.getRepository(Token);
 
         try {
-            const token = await tokenRepo.findOne({ where: { user: { id: +userId }, blobName } });
-            if (!token) {
+            const token = await tokenRepo.findOne({
+                where: [
+                  { user: { id: +userId }, blobName: blobName },
+                  { user: {id: undefined}, blobName: blobName }
+                ]
+              });            if (!token) {
             return res.status(404).send('No token found for the specified blob and user');
             }
 
@@ -67,6 +71,31 @@ export const AzureBlobService = (app: express.Express) => {
             res.status(500).send('Internal server error');
         }
     });
+
+    app.delete("/delete-document/:blobName/:userId", authMiddlewareAdminstrateur, async (req: Request, res: Response) => {
+        const userId = req.params.userId;
+        const blobName = req.params.blobName;
+      
+        const tokenRepo = AppDataSource.getRepository(Token);
+      
+        try {
+          const token = await tokenRepo.findOne({ where: { user: { id: +userId }, blobName } });
+      
+          if (!token) {
+            return res.status(404).send('Blob not found or you do not have access');
+          }
+      
+          await tokenRepo.remove(token);
+      
+          await deleteBlob(blobName);
+      
+          res.status(200).send('Blob deleted successfully');
+        } catch (error) {
+          console.error(error);
+          res.status(500).send('Internal server error');
+        }
+      });
+      
 }
 
 
