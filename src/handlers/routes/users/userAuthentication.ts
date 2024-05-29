@@ -1,11 +1,12 @@
 import express, { Request, Response } from "express"
 import { AppDataSource } from "../../../database/database"
 import { compare, hash } from "bcrypt";
-import { createUserValidation, LoginUserValidation } from "../../validators/user-validator"
+import { createUserValidation, LoginUserValidation, userIdValidation } from "../../validators/user-validator"
 import { generateValidationErrorMessage } from "../../validators/generate-validation-message";
 import { User } from "../../../database/entities/user";
 import { sign } from "jsonwebtoken";
 import { Token } from "../../../database/entities/token";
+import { UserUsecase } from "../../../domain/user-usecase";
 
 export const UserHandlerAuthentication = (app: express.Express) => {
     app.post('/auth/signup', async (req: Request, res: Response) => {
@@ -76,6 +77,37 @@ export const UserHandlerAuthentication = (app: express.Express) => {
             // store un token pour un user
             await AppDataSource.getRepository(Token).save({ token: token, user: user})
             res.status(200).json({ token });
+        } catch (error) {
+            console.log(error)
+            res.status(500).send({ "error": "internal error retry later" })
+            return
+        }
+    })
+
+    app.delete('/auth/logout/:id', async (req: Request, res: Response) => {
+        try {
+            const validationResult = userIdValidation.validate(req.params)
+            if (validationResult.error) {
+                res.status(400).send(generateValidationErrorMessage(validationResult.error.details))
+                return
+            }
+
+            const userId = validationResult.value
+
+            const userRepository = AppDataSource.getRepository(User);
+            const user = await userRepository.findOneBy({ id: userId.id })
+
+            if (user === null) {
+                res.status(404).send({ "error": `user ${userId.id} not found` })
+                return
+            }
+
+            const userUsecase = new UserUsecase(AppDataSource);
+
+            userUsecase.deleteToken(user.id)
+            
+            res.status(201).send({ "message": "logout success" });
+            return
         } catch (error) {
             console.log(error)
             res.status(500).send({ "error": "internal error retry later" })
