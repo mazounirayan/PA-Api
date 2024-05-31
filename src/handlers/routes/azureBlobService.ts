@@ -5,13 +5,31 @@ import { AppDataSource } from '../../database/database';
 import { authMiddlewareAdminstrateur } from '../middleware/auth-middleware';
 import { User } from '../../database/entities/user';
 import upload from '../middleware/upload';
+import { azureBlobService } from '../validators/azureBlob-validator';
+import { generateValidationErrorMessage } from '../validators/generate-validation-message';
+import { userIdValidation } from '../validators/user-validator';
+import { UserUsecase } from '../../domain/user-usecase';
 
 
 export const AzureBlobService = (app: express.Express) => {
 
-    app.get("/generate-sas-url/:blobName/:userid", authMiddlewareAdminstrateur ,async (req: Request, res: Response) => {
-        const userId = req.params.userid;
-        const blobName = req.params.blobName;
+    app.get("/generate-sas-url/:id", authMiddlewareAdminstrateur ,async (req: Request, res: Response) => {
+        const validationResult = azureBlobService.validate({ ...req.params, ...req.body });
+
+        if (validationResult.error) {
+            res.status(400).send(generateValidationErrorMessage(validationResult.error.details));
+            return;
+        }
+
+        const userUsecase = new UserUsecase(AppDataSource);
+
+        if(await userUsecase.verifUser(+req.params.id, req.body.token) === false){
+            res.status(400).send({ "error": `Bad user` });
+            return;
+        } 
+
+        const userId = validationResult.value.id;
+        const blobName = validationResult.value.blobName;
         const tokenRepo = AppDataSource.getRepository(Token);
 
         try {
@@ -34,9 +52,22 @@ export const AzureBlobService = (app: express.Express) => {
         }
     });
     
-    app.post("/upload-document/:userId", authMiddlewareAdminstrateur, upload.single('file'), async (req: Request, res: Response) => {
-        const userId = req.params.userId;
-        
+    app.post("/upload-document/:id", authMiddlewareAdminstrateur, upload.single('file'), async (req: Request, res: Response) => {
+      const validationResult = userIdValidation.validate({ ...req.params, ...req.body });
+
+      if (validationResult.error) {
+          res.status(400).send(generateValidationErrorMessage(validationResult.error.details));
+          return;
+      }
+
+      const userUsecase = new UserUsecase(AppDataSource);
+
+      if(await userUsecase.verifUser(+req.params.id, req.body.token) === false){
+          res.status(400).send({ "error": `Bad user` });
+          return;
+      } 
+
+        const userId = validationResult.value.id;        
         const file = req.file;
         if (!file) {
             return res.status(400).send('No file uploaded');
@@ -72,10 +103,24 @@ export const AzureBlobService = (app: express.Express) => {
         }
     });
 
-    app.delete("/delete-document/:blobName/:userId", authMiddlewareAdminstrateur, async (req: Request, res: Response) => {
-        const userId = req.params.userId;
-        const blobName = req.params.blobName;
-      
+    app.delete("/delete-document/:id", authMiddlewareAdminstrateur, async (req: Request, res: Response) => {
+        const validationResult = azureBlobService.validate({ ...req.params, ...req.body });
+
+        if (validationResult.error) {
+            res.status(400).send(generateValidationErrorMessage(validationResult.error.details));
+            return;
+        }
+
+        const userUsecase = new UserUsecase(AppDataSource);
+
+        if(await userUsecase.verifUser(+req.params.id, req.body.token) === false){
+            res.status(400).send({ "error": `Bad user` });
+            return;
+        } 
+
+        const userId = validationResult.value.id;
+        const blobName = validationResult.value.blobName;
+        
         const tokenRepo = AppDataSource.getRepository(Token);
       
         try {

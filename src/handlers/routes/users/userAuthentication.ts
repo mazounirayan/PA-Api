@@ -11,7 +11,6 @@ import { UserUsecase } from "../../../domain/user-usecase";
 export const UserHandlerAuthentication = (app: express.Express) => {
     app.post('/auth/signup', async (req: Request, res: Response) => {
         try {
-            console.log(req.body)
             const validationResult = createUserValidation.validate(req.body)
             if (validationResult.error) {
                 res.status(400).send(generateValidationErrorMessage(validationResult.error.details))
@@ -56,27 +55,34 @@ export const UserHandlerAuthentication = (app: express.Express) => {
             const loginUserRequest = validationResult.value
 
             // valid user exist
-            const user = await AppDataSource.getRepository(User).findOneBy({ email: loginUserRequest.email });
+            let user = await AppDataSource.getRepository(User).findOneBy({ email: loginUserRequest.email });
 
             if (!user) {
                 res.status(400).send({ error: "username or password not valid" })
                 return
             }
 
-            // valid password for this user
             const isValid = await compare(loginUserRequest.motDePasse, user.motDePasse);
             if (!isValid) {
                 res.status(400).send({ error: "username or password not valid" })
                 return
             }
+
+            const userUsecase = new UserUsecase(AppDataSource);
+
+            user = await userUsecase.getOneUser(user.id);
+
+            if (user === null) {
+                res.status(404).send({ "error": `user not found` })
+                return
+            }
             
             const secret = process.env.JWT_SECRET ?? "azerty"
-            console.log(secret)
-            // generate jwt
             const token = sign({ userId: user.id, email: user.email }, secret, { expiresIn: '1d' });
-            // store un token pour un user
             await AppDataSource.getRepository(Token).save({ token: token, user: user})
-            res.status(200).json({ token });
+            
+            
+            res.status(200).json({ token, user });
         } catch (error) {
             console.log(error)
             res.status(500).send({ "error": "internal error retry later" })
@@ -86,11 +92,20 @@ export const UserHandlerAuthentication = (app: express.Express) => {
 
     app.delete('/auth/logout/:id', async (req: Request, res: Response) => {
         try {
-            const validationResult = userIdValidation.validate(req.params)
+            const validationResult = userIdValidation.validate({ ...req.params, ...req.body });
+
+
             if (validationResult.error) {
-                res.status(400).send(generateValidationErrorMessage(validationResult.error.details))
-                return
+                res.status(400).send(generateValidationErrorMessage(validationResult.error.details));
+                return;
             }
+
+            const userUsecase = new UserUsecase(AppDataSource);
+            
+            if(await userUsecase.verifUser(+req.params.id, req.body.token) === false){
+                res.status(400).send({ "error": `Bad user` });
+                return;
+            } 
 
             const userId = validationResult.value
 
@@ -102,7 +117,6 @@ export const UserHandlerAuthentication = (app: express.Express) => {
                 return
             }
 
-            const userUsecase = new UserUsecase(AppDataSource);
 
             userUsecase.deleteToken(user.id)
             

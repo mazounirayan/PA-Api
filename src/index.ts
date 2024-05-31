@@ -5,6 +5,20 @@ import { AppDataSource } from "./database/database";
 //import { swaggerDocs } from "./swagger/swagger";
 //import "reflect-metadata"
 
+
+/**            const validationResult = userIdValidation.validate({ ...req.params, ...req.body });
+
+
+            if (validationResult.error) {
+                res.status(400).send(generateValidationErrorMessage(validationResult.error.details));
+                return;
+            }
+
+            const userUsecase = new UserUsecase(AppDataSource);
+            if(!await userUsecase.verifUser(+req.params.id, req.body.token)){
+                res.status(400).send({ "error": `Bad user` });
+                return;
+            } */
 const main = async () => {
     const app = express()
     const port = 3000

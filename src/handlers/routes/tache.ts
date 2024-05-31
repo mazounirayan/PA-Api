@@ -1,12 +1,6 @@
 import express, { Request, Response } from "express";
 import { generateValidationErrorMessage } from "../validators/generate-validation-message";
 import { AppDataSource } from "../../database/database";
-import { createRessourceValidation, listRessourceValidation, ressourceIdValidation, updateRessourceValidation } from "../validators/ressource-validator";
-import { RessourceUsecase } from "../../domain/ressource-usecase";
-import { Ressource } from "../../database/entities/ressource";
-import { createReservationValidation, listReservationValidation, reservationIdValidation, updateReservationValidation } from "../validators/reservation-validation";
-import { ReservationUsecase } from "../../domain/reservation-usecase";
-import { Reservation } from "../../database/entities/reservation";
 import { User } from "../../database/entities/user";
 import { createTacheValidation, listTacheValidation, tacheIdValidation, updateTacheValidation } from "../validators/tache-validator";
 import { TacheUsecase } from "../../domain/tache-usecase";

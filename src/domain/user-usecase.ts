@@ -124,4 +124,32 @@ export class UserUsecase {
         const userUpdate = await repo.save(userFound);
         return userUpdate;
     }
+
+    async verifUser(id: number, token: string): Promise<boolean> { 
+        const user = await this.getOneUser(id);
+        if (!user) {
+            return false;
+        }
+    
+        for (const element of user.tokens) {
+            if (element.token === token) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    async verifAcces(userId:number, funcId:number):Promise<boolean>{
+        const entityManager = this.db;
+
+        const sqlQuery = `
+        select count(*) from droit where userId = ? and fonctionnaliteId = ?;`;
+
+        const query = await entityManager.query(sqlQuery, [userId, funcId]);
+
+        return query;
+    }
+    
+
+
 }

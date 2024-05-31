@@ -54,12 +54,20 @@ export const UserHandler = (app: express.Express) => {
 
     app.delete("/users/:id", async (req: Request, res: Response) => {
         try {
-            const validationResult = userIdValidation.validate(req.params);
+            const validationResult = userIdValidation.validate({ ...req.params, ...req.body });
+
 
             if (validationResult.error) {
                 res.status(400).send(generateValidationErrorMessage(validationResult.error.details));
                 return;
             }
+
+            const userUsecase = new UserUsecase(AppDataSource);
+            
+            if(await userUsecase.verifUser(+req.params.id, req.body.token) === false){
+                res.status(400).send({ "error": `Bad user` });
+                return;
+            } 
             const userId = validationResult.value;
 
             const userRepository = AppDataSource.getRepository(User);
@@ -79,15 +87,22 @@ export const UserHandler = (app: express.Express) => {
 
     app.get("/users/:id", async (req: Request, res: Response) => {
         try {
-            const validationResult = userIdValidation.validate(req.params);
+            const validationResult = userIdValidation.validate({ ...req.params, ...req.body });
+
 
             if (validationResult.error) {
                 res.status(400).send(generateValidationErrorMessage(validationResult.error.details));
                 return;
             }
-            const userId = validationResult.value;
 
             const userUsecase = new UserUsecase(AppDataSource);
+            
+            if(await userUsecase.verifUser(+req.params.id, req.body.token) === false){
+                res.status(400).send({ "error": `Bad user` });
+                return;
+            } 
+            const userId = validationResult.value;
+
             const user = await userUsecase.getOneUser(userId.id);
             if (user === null) {
                 res.status(404).send({ "error": `User ${userId.id} not found` });
@@ -101,26 +116,24 @@ export const UserHandler = (app: express.Express) => {
     });
 
     app.patch("/users/:id", async (req: Request, res: Response) => {
-        const validation = updateUserValidation.validate({ ...req.params, ...req.body });
-
-        if (validation.error) {
-            res.status(400).send(generateValidationErrorMessage(validation.error.details));
-            return;
-        }
 
 
-
-        const updateUserRequest = validation.value;
 
         try {
-            const userUsecase = new UserUsecase(AppDataSource);
-
-            const validationResult = userIdValidation.validate(req.params);
+            const validationResult = updateUserValidation.validate({ ...req.params, ...req.body });
 
             if (validationResult.error) {
                 res.status(400).send(generateValidationErrorMessage(validationResult.error.details));
                 return;
             }
+    
+            const userUsecase = new UserUsecase(AppDataSource);
+
+            if(await userUsecase.verifUser(+req.params.id, req.body.token) === false){
+                res.status(400).send({ "error": `Bad user` });
+                return;
+            } 
+            const updateUserRequest = validationResult.value;
 
             const updatedUser = await userUsecase.updateUser(
                 updateUserRequest.id,
@@ -147,7 +160,7 @@ export const UserHandler = (app: express.Express) => {
         }
     });
 
-    app.patch("/visiteurs/:id", async (req: Request, res: Response) => {
+    app.patch("/visiteurs/:id" ,async (req: Request, res: Response) => {
         const validation = updateUserValidation.validate({ ...req.params, ...req.body });
 
         if (validation.error) {

@@ -23,14 +23,17 @@ export interface CreateUserValidationRequest {
 
 export const userIdValidation = Joi.object<UserIdRequest>({
     id: Joi.number().required(),
+    token: Joi.string().required()
 });
 
 export interface UserIdRequest {
     id: number
+    token: string
 }
 
 export const updateUserValidation = Joi.object<UpdateUserRequest>({
     id: Joi.number().required(),
+    token: Joi.string().required(),
     nom: Joi.string().optional(),
     prenom: Joi.string().optional(),
     email: Joi.string().email().optional(),
@@ -41,6 +44,7 @@ export const updateUserValidation = Joi.object<UpdateUserRequest>({
 
 export interface UpdateUserRequest {
     id: number
+    token: string
     nom?: string
     prenom?: string
     email?: string
