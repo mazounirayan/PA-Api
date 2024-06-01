@@ -34,8 +34,8 @@ CREATE TABLE droit (
 CREATE TABLE tache (
     id INT AUTO_INCREMENT PRIMARY KEY,
     description TEXT NOT NULL,
-    dateDebut DATETIME NOT NULL,
-    dateFin DATETIME NOT NULL,
+    dateDebut DATE NOT NULL,
+    dateFin DATE NOT NULL,
     statut ENUM('En cours', 'Fini') NOT NULL,
     responsableId INT,
     FOREIGN KEY (responsableId) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE
