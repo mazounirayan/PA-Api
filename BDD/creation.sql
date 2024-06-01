@@ -35,7 +35,7 @@ CREATE TABLE tache (
     id INT AUTO_INCREMENT PRIMARY KEY,
     description TEXT NOT NULL,
     dateDebut DATETIME NOT NULL,
-    dateFin DATETIME,
+    dateFin DATETIME NOT NULL,
     statut ENUM('En cours', 'Fini') NOT NULL,
     responsableId INT,
     FOREIGN KEY (responsableId) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE

@@ -3,10 +3,50 @@ import { AppDataSource } from '../../../database/database';
 import { User } from '../../../database/entities/user';
 import { UserUsecase } from '../../../domain/user-usecase';
 import { generateValidationErrorMessage } from '../../validators/generate-validation-message';
-import { listUserValidation, createUserValidation, userIdValidation, updateUserValidation } from '../../validators/user-validator';
+import { listUserValidation, createUserValidation, userIdValidation, updateUserValidation, userGetBlobValidation } from '../../validators/user-validator';
 
 
 export const UserHandler = (app: express.Express) => {
+
+    app.get("/users/blobName/:id", async (req: Request, res: Response) => {
+        try {
+            const validationResult = userIdValidation.validate({ ...req.params, ...req.body });
+
+
+            if (validationResult.error) {
+                res.status(400).send(generateValidationErrorMessage(validationResult.error.details));
+                return;
+            }
+
+            const userUsecase = new UserUsecase(AppDataSource);
+            
+            if(await userUsecase.verifUser(+req.params.id, req.body.token) === false){
+                res.status(400).send({ "error": `Bad user` });
+                return;
+            } 
+            const userId = validationResult.value;
+
+            const user = await userUsecase.getOneUser(userId.id);
+            if (user === null) {
+                res.status(404).send({ "error": `User ${userId.id} not found` });
+                return;
+            }
+
+            const listBlobName = [];
+
+            for (const element of user.tokens) {
+                if(element.blobName !== null){
+                    listBlobName.push(element.blobName);
+                }
+            }
+
+            res.status(200).send(listBlobName);
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({ error: "Internal error" });
+        }
+    });
+
     app.get("/users", async (req: Request, res: Response) => {
         const validation = listUserValidation.validate(req.query);
 

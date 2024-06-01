@@ -31,6 +31,19 @@ export interface UserIdRequest {
     token: string
 }
 
+
+export const userGetBlobValidation = Joi.object<UserGetBlobRequest>({
+    id: Joi.number().required(),
+    token: Joi.string().required(),
+    blobName: Joi.string().required()
+});
+
+export interface UserGetBlobRequest {
+    id: number
+    token: string
+    blobName: string
+}
+
 export const updateUserValidation = Joi.object<UpdateUserRequest>({
     id: Joi.number().required(),
     token: Joi.string().required(),

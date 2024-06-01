@@ -31,8 +31,8 @@ AND fonctionnalite.id NOT IN (7, 8);
 
 
 INSERT INTO tache (Description, dateDebut, dateFin, statut, responsableId) VALUES
-("Préparer le matériel pour l\'événement", NOW(), NULL, 'En cours', 1),
-('Contacter les fournisseurs', NOW(), NULL, 'En cours', 2);
+("Préparer le matériel pour l\'événement", NOW(), NOW(), 'En cours', 1),
+('Contacter les fournisseurs', NOW(), NOW(), 'En cours', 2);
 
 INSERT INTO evenement (nom, date, description, lieu) VALUES
 ('Gala Annuel', NOW() + INTERVAL 1 MONTH, "Le gala annuel de l\'association", 'Salle des fêtes'),
