@@ -1,5 +1,5 @@
 import {DataSource, SelectQueryBuilder } from "typeorm";
-import { Ressource, TypeRessource, TypeStatut } from "../database/entities/ressource";
+import { Ressource, TypeRessource } from "../database/entities/ressource";
 import { StatutTache } from "../database/entities/tache";
 import { User } from "../database/entities/user";
 import { Tache } from "../database/entities/tache";

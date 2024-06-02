@@ -47,6 +47,9 @@ export class User {
     @Column()
     estBenevole: boolean
 
+    @Column()
+    estEnLigne: boolean
+
     @ManyToOne(() => User, user => user.parraine)
     parrain: User;
 
@@ -55,9 +58,6 @@ export class User {
 
     @OneToMany(() => Tache, tache => tache.responsable)
     taches: Tache[];
-
-    @OneToMany(() => Reservation, reservation => reservation.user)
-    reservations: Reservation[];
 
     @OneToMany(() => User, users => users.parrain)
     parraine: User[];
@@ -73,7 +73,7 @@ export class User {
 
 
 
-    constructor(id: number, nom:string, prenom:string,email: string ,motDePasse: string, role: UserRole, dateInscription:Date, estBenevole: boolean,parrain:User, parraine:User[],tokens: Token[], transactions: Transaction[],taches: Tache[], reservations: Reservation[], demandes: Demande[], parrainageDemandes:ParrainageDemande[]) {
+    constructor(id: number, nom:string, prenom:string,email: string ,motDePasse: string, role: UserRole, dateInscription:Date, estBenevole: boolean,parrain:User, parraine:User[],tokens: Token[], transactions: Transaction[],taches: Tache[], demandes: Demande[], parrainageDemandes:ParrainageDemande[]) {
         this.id = id;
         this.nom = nom;
         this.prenom = prenom;
@@ -82,11 +82,11 @@ export class User {
         this.role = role;
         this.dateInscription = dateInscription;
         this.estBenevole = estBenevole;
+        this.estEnLigne = false;
         this.parrain = parrain;
         this.parraine = parraine
         this.transactions = transactions;
         this.taches = taches;
-        this.reservations = reservations;
         this.tokens = tokens;
         this.demandes = demandes
         this.parrainageDemandes = parrainageDemandes

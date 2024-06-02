@@ -1,95 +1,90 @@
 import {DataSource, SelectQueryBuilder } from "typeorm";
-import { Ressource, TypeRessource, TypeStatut } from "../database/entities/ressource";
+import { Ressource, TypeRessource} from "../database/entities/ressource";
 
 
 export interface ListRessourceRequest {
     page: number
     limit: number
     nom?: string
-    type?: string;
-    statut?: string;
+    type?: TypeRessource
+    quantite?: number
     emplacement?: string
 }
-
-
 
 export interface UpdateRessourceParams {
     nom?: string
-    type?: TypeRessource;
-    statut?: TypeStatut;
+    type?: TypeRessource
+    quantite?: number
     emplacement?: string
 }
-
 
 export class RessourceUsecase {
     constructor(private readonly db: DataSource) { }
 
-    async listShowtime(listRessourceFilter: ListRessourceRequest): Promise<{ Ressources: Ressource[]; totalCount: number; }> {
-        const query = this.db.createQueryBuilder(Ressource, 'ressource')
-        if (listRessourceFilter.nom) {
-            query.andWhere('ressource.salle <= :salle', { salle: listRessourceFilter.nom })
+    async listRessources(listRessourceRequest: ListRessourceRequest): Promise<{ Ressources: Ressource[]; totalCount: number; }> {
+        const query = this.db.createQueryBuilder(Ressource, 'ressource');
+        if (listRessourceRequest.nom) {
+            query.andWhere("ressource.nom = :nom", { nom: listRessourceRequest.nom });
         }
 
-        if(listRessourceFilter.type){
-            query.andWhere('ressource.type <= :type', { type: listRessourceFilter.type })
+        if (listRessourceRequest.type) {
+            query.andWhere("ressource.type = :type", { type: listRessourceRequest.type });
         }
 
-        if(listRessourceFilter.statut){
-            query.andWhere('ressource.status <= :status', { status: listRessourceFilter.statut })
+        if (listRessourceRequest.quantite !== undefined) {
+            query.andWhere("ressource.quantite = :quantite", { quantite: listRessourceRequest.quantite });
         }
 
-        if(listRessourceFilter.emplacement){
-            query.andWhere('ressource.emplacement <= :emplacement', { emplacement: listRessourceFilter.emplacement })
+        if (listRessourceRequest.emplacement) {
+            query.andWhere("ressource.emplacement = :emplacement", { emplacement: listRessourceRequest.emplacement });
         }
 
+        query.skip((listRessourceRequest.page - 1) * listRessourceRequest.limit)
+            .take(listRessourceRequest.limit);
 
-        query.skip((listRessourceFilter.page - 1) * listRessourceFilter.limit)
-        .take(listRessourceFilter.limit)
-
-        const [Ressources, totalCount] = await query.getManyAndCount()
+        const [Ressources, totalCount] = await query.getManyAndCount();
         return {
             Ressources,
             totalCount
-        }
+        };
     }
 
     async getOneRessource(id: number): Promise<Ressource | null> {
         const query = this.db.createQueryBuilder(Ressource, 'ressource')
-        .where("ressource.id = :id", { id: id });
+            .where("ressource.id = :id", { id: id });
 
         const ressource = await query.getOne();
 
-        // Vérifier si le ticket existe
         if (!ressource) {
-            console.log({ error: `Ticket ${id} not found` });
+            console.log({ error: `Ressource ${id} not found` });
             return null;
         }
-        return ressource
+        return ressource;
     }
 
-    async updateRessource(id: number, { nom,type,statut,emplacement }: UpdateRessourceParams): Promise<Ressource | string |null> {
-        const repo = this.db.getRepository(Ressource)
-        const Ressourcefound = await repo.findOneBy({ id })
-        if (Ressourcefound === null) return null
+    async updateRessource(id: number, { nom, type, quantite, emplacement }: UpdateRessourceParams): Promise<Ressource | string | null> {
+        const repo = this.db.getRepository(Ressource);
+        const ressourceFound = await repo.findOneBy({ id });
+        if (ressourceFound === null) return null;
 
-        if(nom === undefined && type === undefined && statut === undefined && emplacement === undefined){
-            return "No update provided"
+        if (nom === undefined && type === undefined && quantite === undefined && emplacement === undefined) {
+            return "No changes";
         }
 
         if (nom) {
-            Ressourcefound.nom = nom
+            ressourceFound.nom = nom;
         }
         if (type) {
-            Ressourcefound.type = type
+            ressourceFound.type = type;
         }
-        if (statut) {
-            Ressourcefound.statut = statut
+        if (quantite !== undefined) {
+            ressourceFound.quantite = quantite;
         }
         if (emplacement) {
-            Ressourcefound.emplacement = emplacement
+            ressourceFound.emplacement = emplacement;
         }
 
-        const ShowtimeUpdate = await repo.save(Ressourcefound)
-        return ShowtimeUpdate
+        const ressourceUpdate = await repo.save(ressourceFound);
+        return ressourceUpdate;
     }
 }

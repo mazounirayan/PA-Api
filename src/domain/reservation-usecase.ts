@@ -99,11 +99,8 @@ export class ReservationUsecase {
             Reservationfound.description = description
         }
         if (ressource) {
-            Reservationfound.ressource = ressource
         }
-        if (user) {
-            Reservationfound.user = user
-        }
+ 
 
         const ShowtimeUpdate = await repo.save(Reservationfound)
         return ShowtimeUpdate

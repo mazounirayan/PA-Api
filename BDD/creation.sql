@@ -13,6 +13,7 @@ CREATE TABLE user (
     dateInscription DATE NOT NULL,
     estBenevole BOOLEAN DEFAULT FALSE,
     parrainId INT,
+    estEnLigne BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (parrainId) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -41,12 +42,22 @@ CREATE TABLE tache (
     FOREIGN KEY (responsableId) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+CREATE TABLE ressource (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(255) NOT NULL,
+    type ENUM('Vetement', 'Argent', 'Alimentaire','Jouet','Matériel maison divers','Materiel','Autre') NOT NULL,
+    quantite INT DEFAULT 1,
+    emplacement VARCHAR(255) DEFAULT NULL
+);
+
 CREATE TABLE evenement (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(255) NOT NULL,
     date DATETIME NOT NULL,
     description TEXT NOT NULL,
-    lieu VARCHAR(255) NOT NULL
+    lieu VARCHAR(255) NOT NULL,
+    idRessource INT,
+    FOREIGN KEY (idRessource) REFERENCES ressource(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE inscription (
@@ -112,16 +123,9 @@ CREATE TABLE document (
     FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE ressource (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nom VARCHAR(255) NOT NULL,
-    type ENUM('Salle', 'Matériel', 'Alimentaire') NOT NULL,
-    statut ENUM('Disponible', 'Réservé') NOT NULL,
-    emplacement VARCHAR(255) NOT NULL
-);
 
-CREATE TABLE reservation (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+/*CREATE TABLE reservation (
+   id INT AUTO_INCREMENT PRIMARY KEY,
     dateDebut DATETIME NOT NULL,
     dateFin DATETIME NOT NULL,
     description TEXT NOT NULL,
@@ -129,7 +133,7 @@ CREATE TABLE reservation (
     userId INT NOT NULL,
     FOREIGN KEY (ressourceId) REFERENCES ressource(id) ON DELETE CASCADE ON UPDATE CASCADE, 
     FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE
-);
+);*/
 
 CREATE TABLE token (
     id INT AUTO_INCREMENT PRIMARY KEY,

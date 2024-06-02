@@ -81,6 +81,12 @@ export const UserHandlerAuthentication = (app: express.Express) => {
             const token = sign({ userId: user.id, email: user.email }, secret, { expiresIn: '1d' });
             await AppDataSource.getRepository(Token).save({ token: token, user: user})
             
+
+            user.estEnLigne = true;
+            await userUsecase.updateUser(
+                user.id,
+                { ...user }
+            );
             
             res.status(200).json({ token, user });
         } catch (error) {
@@ -119,6 +125,13 @@ export const UserHandlerAuthentication = (app: express.Express) => {
 
 
             userUsecase.deleteToken(user.id)
+
+            user.estEnLigne = false;
+            await userUsecase.updateUser(
+                user.id,
+                { ...user }
+            );
+            
             
             res.status(201).send({ "message": "logout success" });
             return

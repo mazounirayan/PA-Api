@@ -25,7 +25,7 @@ export const RessourceHandler = (app: express.Express) => {
 
             try {
                 const ressourceUsecase = new RessourceUsecase(AppDataSource);
-                const listRessources = await ressourceUsecase.listShowtime({ ...listRessourceRequest, page, limit })
+                const listRessources = await ressourceUsecase.listRessources({ ...listRessourceRequest, page, limit })
                 res.status(200).send(listRessources)
             } catch (error) {
                 console.log(error)

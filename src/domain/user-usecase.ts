@@ -14,6 +14,7 @@ export interface ListUserRequest {
     email?: string
     role?: UserRole
     estBenevole?: boolean
+    estEnLigne?: boolean
 }
 
 export interface UpdateUserParams {
@@ -23,6 +24,7 @@ export interface UpdateUserParams {
     motDePasse?: string
     role?: UserRole
     estBenevole?: boolean
+    estEnLigne?: boolean
 }
 
 export class UserUsecase {
@@ -58,9 +60,12 @@ export class UserUsecase {
             query.andWhere("user.estBenevole = :estBenevole", { estBenevole: listUserRequest.estBenevole });
         }
 
+        if (listUserRequest.estEnLigne !== undefined) {
+            query.andWhere("user.estEnLigne = :estEnLigne", { estEnLigne: listUserRequest.estEnLigne });
+        }
+
         query.leftJoinAndSelect('user.transactions', 'transactions')
             .leftJoinAndSelect('user.taches', 'taches')
-            .leftJoinAndSelect('user.reservations', 'reservations')
             .leftJoinAndSelect('user.tokens', 'tokens')
             .leftJoinAndSelect('user.demandes', 'demandes')
             .leftJoinAndSelect('user.parrainageDemandes', 'parrainageDemandes')
@@ -78,7 +83,6 @@ export class UserUsecase {
         const query = this.db.createQueryBuilder(User, 'user')
             .leftJoinAndSelect('user.transactions', 'transactions')
             .leftJoinAndSelect('user.taches', 'taches')
-            .leftJoinAndSelect('user.reservations', 'reservations')
             .leftJoinAndSelect('user.tokens', 'tokens')
             .leftJoinAndSelect('user.demandes', 'demandes')
             .leftJoinAndSelect('user.parrainageDemandes', 'parrainageDemandes')
@@ -93,7 +97,7 @@ export class UserUsecase {
         return user;
     }
 
-    async updateUser(id: number, { nom, prenom, email, motDePasse, role, estBenevole }: UpdateUserParams): Promise<User | string | null> {
+    async updateUser(id: number, { nom, prenom, email, motDePasse, role, estBenevole, estEnLigne }: UpdateUserParams): Promise<User | string | null> {
         const repo = this.db.getRepository(User);
         const userFound = await repo.findOneBy({ id });
         if (userFound === null) return null;
@@ -119,6 +123,10 @@ export class UserUsecase {
         }
         if (estBenevole !== undefined) {
             userFound.estBenevole = estBenevole;
+        }
+
+        if (estEnLigne !== undefined) {
+            userFound.estEnLigne = estEnLigne;
         }
 
         const userUpdate = await repo.save(userFound);

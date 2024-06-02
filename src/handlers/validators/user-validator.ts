@@ -52,7 +52,9 @@ export const updateUserValidation = Joi.object<UpdateUserRequest>({
     email: Joi.string().email().optional(),
     motDePasse: Joi.string().optional(),
     role: Joi.string().valid(...Object.values(UserRole)).optional(),
-    estBenevole: Joi.boolean().optional()
+    estBenevole: Joi.boolean().optional(),
+    estEnLigne : Joi.boolean().optional()
+
 });
 
 export interface UpdateUserRequest {
@@ -64,6 +66,8 @@ export interface UpdateUserRequest {
     motDePasse?: string
     role?: UserRole
     estBenevole?: boolean
+    estEnLigne?: boolean
+
 }
 
 export const listUserValidation = Joi.object<ListUserRequest>({
@@ -73,7 +77,8 @@ export const listUserValidation = Joi.object<ListUserRequest>({
     prenom: Joi.string().optional(),
     email: Joi.string().email().optional(),
     role: Joi.string().valid(...Object.values(UserRole)).optional(),
-    estBenevole: Joi.boolean().optional()
+    estBenevole: Joi.boolean().optional(),
+    estEnLigne : Joi.boolean().optional()
 });
 
 export interface ListUserRequest {
@@ -84,6 +89,7 @@ export interface ListUserRequest {
     email?: string
     role?: UserRole
     estBenevole?: boolean
+    estEnLigne?: boolean
 }
 
 export const LoginUserValidation = Joi.object<LoginUserValidationRequest>({

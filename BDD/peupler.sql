@@ -69,12 +69,13 @@ INSERT INTO transaction (montant, type, dateTransaction, userId, evenementId) VA
 INSERT INTO document (titre, type, cheminAcces, userId) VALUES
 ('Procès-verbal AG 2023', 'PV', '/docs/pv_ag_2023.pdf', 1);
 
-INSERT INTO ressource (nom, type, statut, emplacement) VALUES
-('Salle A', 'Salle', 'Disponible', 'Bâtiment B'),
-('VIdéoprojecteur', 'Matériel', 'Disponible', 'Salle de Conférence');
+INSERT INTO ressource (nom, type,  quantite ,emplacement) VALUES
+('Sac de pomme', 'Alimentaire', 3, 'Bâtiment B');
+INSERT INTO ressource (nom, type,  quantite) VALUES
+('VIdéoprojecteur', 'Matériel', 2);
 
-INSERT INTO reservation (dateDebut, dateFin, description, ressourceId, UserId) VALUES
-(NOW(), NOW() + INTERVAL 2 HOUR, 'Réunion du bureau', 1, 1);
+/*INSERT INTO reservation (dateDebut, dateFin, description, ressourceId, UserId) VALUES
+(NOW(), NOW() + INTERVAL 2 HOUR, 'Réunion du bureau', 1, 1);*/
 
 INSERT INTO demande (type, dateDemande, statut, userId)
 VALUES 
