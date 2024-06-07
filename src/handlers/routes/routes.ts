@@ -12,6 +12,7 @@ import { AideProjetDemandeHandler } from "./aideProjetDemande";
 import { EvenementHandler } from "./evenement";
 import { EvenementDemandeHandler } from "./evenementDemande";
 import { AzureBlobService } from "./azureBlobService";
+import { FileVersion } from "./fileVersion";
 
 
 export const initRoutes = (app: express.Express) => {
@@ -33,5 +34,6 @@ export const initRoutes = (app: express.Express) => {
     EvenementHandler(app)
     EvenementDemandeHandler(app)
     AzureBlobService(app)
+    FileVersion(app)
     app.use(invalidPathHandler);
 }

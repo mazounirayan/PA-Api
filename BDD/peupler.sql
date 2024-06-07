@@ -38,10 +38,10 @@ INSERT INTO evenement (nom, date, description, lieu) VALUES
 ('Gala Annuel', NOW() + INTERVAL 1 MONTH, "Le gala annuel de l\'association", 'Salle des fêtes'),
 ("Conférence sur l\'éducation", NOW() + INTERVAL 2 MONTH, 'Conférence sur les échanges éducatifs', 'Amphithéâtre Central');
 
-INSERT INTO inscription (userId, eventId, statut) VALUES
-(1, 1, 'Confirmé'),
-(2, 1, 'Confirmé'),
-(1, 2, 'En attente');
+INSERT INTO inscription (userId, eventId) VALUES
+(1, 1),
+(2, 1),
+(1, 2);
 
 INSERT INTO ag (nom, date, description, type, quorum) VALUES
 ('AG Annuelle 2024', NOW() + INTERVAL 3 MONTH, 'Discussion sur les bilans et projets futurs', 'Ordinaire', 15),

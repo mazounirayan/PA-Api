@@ -219,6 +219,11 @@ export const UserHandler = (app: express.Express) => {
             }
             const userUsecase = new UserUsecase(AppDataSource);
 
+            if(await userUsecase.verifUser(+req.params.id, req.body.token) === false){
+                res.status(400).send({ "error": `Bad user` });
+                return;
+            } 
+
             const validationResult = userIdValidation.validate(req.params);
 
             if (validationResult.error) {

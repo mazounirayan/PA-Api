@@ -60,13 +60,28 @@ CREATE TABLE evenement (
     FOREIGN KEY (idRessource) REFERENCES ressource(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+CREATE TABLE evenement_ressource (
+    idRessource INT PRIMARY KEY,
+    idEvenement INT PRIMARY KEY,
+    nbQuantite INT NOT NULL,
+    FOREIGN KEY (idRessource) REFERENCES ressource(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (idEvenement) REFERENCES evenement(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
 CREATE TABLE inscription (
     id INT AUTO_INCREMENT PRIMARY KEY,
     userId INT NOT NULL,
     eventId INT NOT NULL,
-    statut VARCHAR(50) NOT NULL,
     FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (eventId) REFERENCES evenement(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE sondage(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(255) NOT NULL,
+    date DATETIME NOT NULL,
+    description TEXT,
+    type VARCHAR(50),
 );
 
 CREATE TABLE ag (
@@ -89,9 +104,11 @@ CREATE TABLE participationAG (
 CREATE TABLE proposition (
     id INT AUTO_INCREMENT PRIMARY KEY,
     description TEXT NOT NULL,
-    type VARCHAR(50) NOT NULL,
-    agId INT NOT NULL,
-    FOREIGN KEY (agId) REFERENCES ag(id) ON DELETE CASCADE ON UPDATE CASCADE
+    type ENUM('checkbox', 'radio', 'text') NOT NULL,
+    agId INT,
+    sondageId INT,
+    FOREIGN KEY (agId) REFERENCES ag(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (sondageId) REFERENCES sondage(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE vote (
@@ -114,6 +131,8 @@ CREATE TABLE transaction (
     FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+
+
 CREATE TABLE document (
     id INT AUTO_INCREMENT PRIMARY KEY,
     titre VARCHAR(255) NOT NULL,
@@ -122,6 +141,9 @@ CREATE TABLE document (
     userId INT,
     FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+
+
 
 
 /*CREATE TABLE reservation (

@@ -7,6 +7,7 @@ import { Reservation } from "./reservation"
 import { Demande } from "./demande"
 import { EvenementDemande } from "./evenementDemande"
 import { ParrainageDemande } from "./parrainageDemande"
+import { Inscription } from "./inscription"
 
 export enum UserRole {
     Visiteur = "Visiteur",
@@ -56,6 +57,9 @@ export class User {
     @OneToMany(() => Transaction, transactions => transactions.user)
     transactions: Transaction[];
 
+    @OneToMany(() => Inscription, inscriptions => inscriptions.user)
+    inscriptions: Inscription[];
+
     @OneToMany(() => Tache, tache => tache.responsable)
     taches: Tache[];
 
@@ -73,7 +77,7 @@ export class User {
 
 
 
-    constructor(id: number, nom:string, prenom:string,email: string ,motDePasse: string, role: UserRole, dateInscription:Date, estBenevole: boolean,parrain:User, parraine:User[],tokens: Token[], transactions: Transaction[],taches: Tache[], demandes: Demande[], parrainageDemandes:ParrainageDemande[]) {
+    constructor(id: number, nom:string, prenom:string,email: string ,motDePasse: string, role: UserRole, dateInscription:Date, estBenevole: boolean,inscriptions:Inscription[] , parrain:User, parraine:User[],tokens: Token[], transactions: Transaction[],taches: Tache[], demandes: Demande[], parrainageDemandes:ParrainageDemande[]) {
         this.id = id;
         this.nom = nom;
         this.prenom = prenom;
@@ -86,6 +90,7 @@ export class User {
         this.parrain = parrain;
         this.parraine = parraine
         this.transactions = transactions;
+        this.inscriptions = inscriptions;
         this.taches = taches;
         this.tokens = tokens;
         this.demandes = demandes
