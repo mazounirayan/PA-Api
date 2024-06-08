@@ -12,6 +12,8 @@ export interface ListUserRequest {
     nom?: string
     prenom?: string
     email?: string
+    numTel?: string
+    profession?: string
     role?: UserRole
     estBenevole?: boolean
     estEnLigne?: boolean
@@ -22,6 +24,8 @@ export interface UpdateUserParams {
     prenom?: string
     email?: string
     motDePasse?: string
+    numTel?: string
+    profession?: string
     role?: UserRole
     estBenevole?: boolean
     estEnLigne?: boolean
@@ -52,6 +56,14 @@ export class UserUsecase {
             query.andWhere("user.email = :email", { email: listUserRequest.email });
         }
 
+        if(listUserRequest.numTel){
+            query.andWhere("user.numTel = :numTel", { numTel: listUserRequest.numTel });
+        }
+
+        if(listUserRequest.profession){
+            query.andWhere("user.profession = :profession", { profession: listUserRequest.profession });
+        }
+
         if (listUserRequest.role) {
             query.andWhere("user.role = :role", { role: listUserRequest.role });
         }
@@ -64,11 +76,11 @@ export class UserUsecase {
             query.andWhere("user.estEnLigne = :estEnLigne", { estEnLigne: listUserRequest.estEnLigne });
         }
 
-        query.leftJoinAndSelect('user.transactions', 'transactions')
-            .leftJoinAndSelect('user.taches', 'taches')
+        query.leftJoinAndSelect('user.taches', 'taches')
             .leftJoinAndSelect('user.tokens', 'tokens')
-            .leftJoinAndSelect('user.demandes', 'demandes')
             .leftJoinAndSelect('user.parrainageDemandes', 'parrainageDemandes')
+            .leftJoinAndSelect('user.parraine', 'parraine')
+
             .skip((listUserRequest.page - 1) * listUserRequest.limit)
             .take(listUserRequest.limit);
 
@@ -81,11 +93,10 @@ export class UserUsecase {
 
     async getOneUser(id: number): Promise<User | null> {
         const query = this.db.createQueryBuilder(User, 'user')
-            .leftJoinAndSelect('user.transactions', 'transactions')
             .leftJoinAndSelect('user.taches', 'taches')
             .leftJoinAndSelect('user.tokens', 'tokens')
-            .leftJoinAndSelect('user.demandes', 'demandes')
             .leftJoinAndSelect('user.parrainageDemandes', 'parrainageDemandes')
+            .leftJoinAndSelect('user.parraine', 'parraine')
             .where("user.id = :id", { id: id });
 
         const user = await query.getOne();
@@ -97,7 +108,7 @@ export class UserUsecase {
         return user;
     }
 
-    async updateUser(id: number, { nom, prenom, email, motDePasse, role, estBenevole, estEnLigne }: UpdateUserParams): Promise<User | string | null> {
+    async updateUser(id: number, { nom, prenom, email, motDePasse, numTel ,role, profession ,estBenevole, estEnLigne }: UpdateUserParams): Promise<User | string | null> {
         const repo = this.db.getRepository(User);
         const userFound = await repo.findOneBy({ id });
         if (userFound === null) return null;
@@ -120,6 +131,12 @@ export class UserUsecase {
         }
         if (role) {
             userFound.role = role;
+        }
+        if (numTel) {
+            userFound.numTel = numTel;
+        }
+        if (profession) {
+            userFound.profession = profession;
         }
         if (estBenevole !== undefined) {
             userFound.estBenevole = estBenevole;

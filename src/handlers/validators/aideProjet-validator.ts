@@ -5,7 +5,7 @@ export const createAideProjetValidation = Joi.object<CreateAideProjetValidationR
     descriptionProjet: Joi.string().required(),
     budget: Joi.number().required(),
     deadline: Joi.date().required()
-});
+}).options({ abortEarly: false });
 
 export interface CreateAideProjetValidationRequest {
     nom: string

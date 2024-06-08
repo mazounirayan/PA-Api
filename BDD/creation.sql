@@ -9,13 +9,29 @@ CREATE TABLE user (
     prenom VARCHAR(100) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     motDePasse VARCHAR(255),
-    role ENUM('Visiteur', 'Administrateur', 'Adherent') NOT NULL,
+    profession VARCHAR(255),
+    numTel VARCHAR(10),
+    role ENUM('Administrateur', 'Adherent') NOT NULL,
     dateInscription DATE NOT NULL,
     estBenevole BOOLEAN DEFAULT FALSE,
+    estEnLigne BOOLEAN DEFAULT FALSE
+);
+
+CREATE TABLE visiteur (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(100) NOT NULL,
+    prenom VARCHAR(100) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    age INT,
+    numTel VARCHAR(10),
+    adresse VARCHAR(255),
+    profession VARCHAR(255),
+    estBenevole BOOLEAN DEFAULT FALSE,
+    dateInscription DATE NOT NULL,
     parrainId INT,
-    estEnLigne BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (parrainId) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
 
 CREATE TABLE fonctionnalite (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -61,27 +77,28 @@ CREATE TABLE evenement (
 );
 
 CREATE TABLE evenement_ressource (
-    idRessource INT PRIMARY KEY,
-    idEvenement INT PRIMARY KEY,
+    idRessource INT,
+    idEvenement INT,
     nbQuantite INT NOT NULL,
+    PRIMARY KEY (idRessource, idEvenement),
     FOREIGN KEY (idRessource) REFERENCES ressource(id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (idEvenement) REFERENCES evenement(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE inscription (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    userId INT NOT NULL,
-    eventId INT NOT NULL,
-    FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (eventId) REFERENCES evenement(id) ON DELETE CASCADE ON UPDATE CASCADE
+    visiteurId INT NOT NULL,
+    evenementId INT NOT NULL,
+    FOREIGN KEY (visiteurId) REFERENCES visiteur(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (evenementId) REFERENCES evenement(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE sondage(
+CREATE TABLE sondage (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(255) NOT NULL,
     date DATETIME NOT NULL,
     description TEXT,
-    type VARCHAR(50),
+    type VARCHAR(50)
 );
 
 CREATE TABLE ag (
@@ -93,7 +110,7 @@ CREATE TABLE ag (
     quorum INT NOT NULL
 );
 
-CREATE TABLE participationAG (
+CREATE TABLE participation_ag (
     id INT AUTO_INCREMENT PRIMARY KEY,
     userId INT NOT NULL,
     agId INT NOT NULL,
@@ -125,22 +142,12 @@ CREATE TABLE transaction (
     montant FLOAT NOT NULL,
     type ENUM('Don', 'Cotisation', 'Paiement evenement', 'Inscription') NOT NULL,
     dateTransaction TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    userId INT NOT NULL,
+    visiteurId INT NOT NULL,
     evenementId INT DEFAULT NULL,
     FOREIGN KEY (evenementId) REFERENCES evenement(id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY (visiteurId) REFERENCES visiteur(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-
-
-CREATE TABLE document (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    titre VARCHAR(255) NOT NULL,
-    type VARCHAR(50) NOT NULL,
-    cheminAcces TEXT NOT NULL,
-    userId INT,
-    FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE
-);
 
 
 
@@ -169,8 +176,8 @@ CREATE TABLE demande(
     type ENUM('Projet','Evénement','Parrainage','Autre'),
     dateDemande TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     statut ENUM('En attente','Acceptée','Refusée') DEFAULT 'En attente',
-    userId INT NOT NULL,
-    FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE
+    visiteurId INT NOT NULL,
+    FOREIGN KEY (visiteurId) REFERENCES visiteur(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE evenement_demande (

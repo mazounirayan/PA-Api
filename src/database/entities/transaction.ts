@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne} fr
 import "reflect-metadata"
 import { User } from "./user"
 import { Evenement } from "./evenement"
+import { Visiteur } from "./visiteur"
 
 export enum TypeTransaction {
     Don = "Don",
@@ -16,13 +17,12 @@ export class Transaction {
     @PrimaryGeneratedColumn()
     id: number
 
-    @ManyToOne(() => User, user => user.transactions)
-    user: User
+    @ManyToOne(() => Visiteur, visiteur => visiteur.transactions)
+    visiteur: Visiteur
 
 
     @ManyToOne(() => Evenement, evenement => evenement.transactions)
     evenement:Evenement
-
 
     @Column()
     montant: number
@@ -37,12 +37,12 @@ export class Transaction {
     dateTransaction:Date
     
 
-    constructor(id: number, montant:number,type:TypeTransaction,dateTransaction:Date,user:User,evenement:Evenement) {
+    constructor(id: number, montant:number,type:TypeTransaction,dateTransaction:Date,visiteur:Visiteur,evenement:Evenement) {
         this.id = id;
         this.montant = montant;
         this.type = type;
         this.dateTransaction = dateTransaction;
-        this.user = user;
+        this.visiteur = visiteur;
         this.evenement = evenement;
     }
 

@@ -31,13 +31,8 @@ export class Ressource {
     @Column()
     quantite: number
 
-
-
     @Column()
     emplacement: string
-
-
-
 
     constructor(id: number, nom:string,type:TypeRessource,emplacement:string, quantite:number ,reservations:Reservation[]) {
         this.id = id;

@@ -1,19 +1,52 @@
 import express, { Request, Response } from 'express';
 import { Token } from '../../database/entities/token';
-import { deleteBlob, generateSasToken, uploadBlob } from '../../domain/azureBlobService-usecase';
 import { AppDataSource } from '../../database/database';
-import { authMiddlewareAdminstrateur } from '../middleware/auth-middleware';
+import { authMiddlewareAdminstrateur, authMiddlewareAll } from '../middleware/auth-middleware';
 import { User } from '../../database/entities/user';
 import upload from '../middleware/upload';
 import { azureBlobService } from '../validators/azureBlob-validator';
 import { generateValidationErrorMessage } from '../validators/generate-validation-message';
 import { userIdValidation } from '../validators/user-validator';
 import { UserUsecase } from '../../domain/user-usecase';
+import { AzureBlobServiceUsecase } from '../../domain/azureBlobService-usecase';
 
 
 export const AzureBlobService = (app: express.Express) => {
 
-    app.get("/generate-sas-url/:id", authMiddlewareAdminstrateur ,async (req: Request, res: Response) => {
+    app.get("/getFiles/:id", authMiddlewareAll, async (req: Request, res: Response) => {
+        const validationResult = userIdValidation.validate({ ...req.params, ...req.body });
+
+        if (validationResult.error) {
+            res.status(400).send(generateValidationErrorMessage(validationResult.error.details));
+            return;
+        }
+
+        const userUsecase = new UserUsecase(AppDataSource);
+
+        if(await userUsecase.verifUser(+req.params.id, req.body.token) === false){
+            res.status(400).send({ "error": `Bad user` });
+            return;
+        } 
+
+        const userId = validationResult.value.id;
+
+        try {
+            const azureUseCase = new AzureBlobServiceUsecase(AppDataSource);
+            const blobName = await azureUseCase.getBlobName(userId);
+
+            if (!blobName) {
+                res.status(200).send({ "reponse": `Aucun fichier` });
+            }
+
+
+            res.json({ blobName });
+        } catch (error) {
+            console.error(error);
+            res.status(500).send('Internal server error');
+        }
+    });
+
+    app.get("/generate-sas-url/:id", authMiddlewareAll ,async (req: Request, res: Response) => {
         const validationResult = azureBlobService.validate({ ...req.params, ...req.body });
 
         if (validationResult.error) {
@@ -43,7 +76,8 @@ export const AzureBlobService = (app: express.Express) => {
             }
 
             const validityInMinutes = 10; // 10 minutes
-            const sasUrl = await generateSasToken(blobName, validityInMinutes);
+            const azureUseCase = new AzureBlobServiceUsecase(AppDataSource);
+            const sasUrl = await azureUseCase.generateSasToken(blobName, validityInMinutes);
 
             res.json({ sasUrl });
         } catch (error) {
@@ -52,7 +86,7 @@ export const AzureBlobService = (app: express.Express) => {
         }
     });
     
-    app.post("/upload-document/:id", authMiddlewareAdminstrateur, upload.single('file'), async (req: Request, res: Response) => {
+    app.post("/upload-document/:id", authMiddlewareAll, upload.single('file'), async (req: Request, res: Response) => {
       const validationResult = userIdValidation.validate({ ...req.params, ...req.body });
 
       if (validationResult.error) {
@@ -85,8 +119,9 @@ export const AzureBlobService = (app: express.Express) => {
 
             const blobName = `${file.originalname}`;
             const mimeType = file.mimetype;
+            const azureUseCase = new AzureBlobServiceUsecase(AppDataSource);
 
-            await uploadBlob(blobName, file.buffer, mimeType);
+            await azureUseCase.uploadBlob(blobName, file.buffer, mimeType);
 
             const newToken = tokenRepo.create({
                 token: 'some-generated-token', 
@@ -103,7 +138,7 @@ export const AzureBlobService = (app: express.Express) => {
         }
     });
 
-    app.delete("/delete-document/:id", authMiddlewareAdminstrateur, async (req: Request, res: Response) => {
+    app.delete("/delete-document/:id", authMiddlewareAll, async (req: Request, res: Response) => {
         const validationResult = azureBlobService.validate({ ...req.params, ...req.body });
 
         if (validationResult.error) {
@@ -131,8 +166,9 @@ export const AzureBlobService = (app: express.Express) => {
           }
       
           await tokenRepo.remove(token);
-      
-          await deleteBlob(blobName);
+          const azureUseCase = new AzureBlobServiceUsecase(AppDataSource);
+
+          await azureUseCase.deleteBlob(blobName);
       
           res.status(200).send('Blob deleted successfully');
         } catch (error) {

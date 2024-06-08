@@ -6,7 +6,7 @@ export const createRessourceValidation = Joi.object<CreateRessourceValidationReq
     type: Joi.string().valid(...Object.values(TypeRessource)).required(),
     quantite: Joi.number().required(),
     emplacement: Joi.string().required()
-});
+}).options({ abortEarly: false });
 
 export interface CreateRessourceValidationRequest {
     nom: string

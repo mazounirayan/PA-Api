@@ -8,6 +8,9 @@ import { Demande } from "./demande"
 import { EvenementDemande } from "./evenementDemande"
 import { ParrainageDemande } from "./parrainageDemande"
 import { Inscription } from "./inscription"
+import { Visiteur } from "./visiteur"
+import { ParticipationAG } from "./participationAG"
+import { Vote } from "./vote"
 
 export enum UserRole {
     Visiteur = "Visiteur",
@@ -35,6 +38,12 @@ export class User {
     @Column()
     motDePasse: string
 
+    @Column()
+    numTel: string
+
+    @Column()
+    profession: string
+
     @Column({
         type: "enum",
         enum: UserRole,
@@ -51,33 +60,27 @@ export class User {
     @Column()
     estEnLigne: boolean
 
-    @ManyToOne(() => User, user => user.parraine)
-    parrain: User;
-
-    @OneToMany(() => Transaction, transactions => transactions.user)
-    transactions: Transaction[];
-
-    @OneToMany(() => Inscription, inscriptions => inscriptions.user)
-    inscriptions: Inscription[];
-
     @OneToMany(() => Tache, tache => tache.responsable)
     taches: Tache[];
 
-    @OneToMany(() => User, users => users.parrain)
-    parraine: User[];
+    @OneToMany(() => ParrainageDemande, parrainageDemandes => parrainageDemandes.parrain)
+    parrainageDemandes: ParrainageDemande[];
+
+    @OneToMany(() => Visiteur, visiteurs => visiteurs.parrain)
+    parraine: Visiteur[];
 
     @OneToMany(() => Token, token => token.user)
     tokens: Token[];
 
-    @OneToMany(() => Demande, demande => demande.user)
-    demandes: Demande[];
+    @OneToMany(() => ParticipationAG, participationAG => participationAG.user)
+    participationsAg: ParticipationAG[];
 
-    @OneToMany(() => ParrainageDemande, parrainageDemande => parrainageDemande.demande)
-    parrainageDemandes: ParrainageDemande[];
+    @OneToMany(() => Vote, vote => vote.user)
+    votes: Vote[];
 
 
 
-    constructor(id: number, nom:string, prenom:string,email: string ,motDePasse: string, role: UserRole, dateInscription:Date, estBenevole: boolean,inscriptions:Inscription[] , parrain:User, parraine:User[],tokens: Token[], transactions: Transaction[],taches: Tache[], demandes: Demande[], parrainageDemandes:ParrainageDemande[]) {
+    constructor(id: number, nom:string, prenom:string,email: string, numTel:string ,motDePasse: string,profession:string, role: UserRole, dateInscription:Date, estBenevole: boolean,inscriptions:Inscription[], parraine:Visiteur[],tokens: Token[], participations: ParticipationAG[],taches: Tache[], votes: Vote[], parrainageDemandes:ParrainageDemande[]) {
         this.id = id;
         this.nom = nom;
         this.prenom = prenom;
@@ -86,15 +89,15 @@ export class User {
         this.role = role;
         this.dateInscription = dateInscription;
         this.estBenevole = estBenevole;
+        this.numTel = numTel;
+        this.parrainageDemandes = parrainageDemandes;
+        this.profession = profession
         this.estEnLigne = false;
-        this.parrain = parrain;
         this.parraine = parraine
-        this.transactions = transactions;
-        this.inscriptions = inscriptions;
         this.taches = taches;
         this.tokens = tokens;
-        this.demandes = demandes
-        this.parrainageDemandes = parrainageDemandes
+        this.participationsAg = participations;
+        this.votes = votes;
 
     }
 }

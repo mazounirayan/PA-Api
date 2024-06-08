@@ -1,6 +1,7 @@
 import { DataSource } from "typeorm";
 import { Demande, StatutDemande, TypeDemande } from "../database/entities/demande";
 import { User } from "../database/entities/user";
+import { Visiteur } from "../database/entities/visiteur";
 
 
 export interface ListDemandeRequest {
@@ -9,14 +10,14 @@ export interface ListDemandeRequest {
     type?: string
     dateDemande?: Date
     statut?: string
-    user?: number
+    visiteur?: number
 }
 
 export interface UpdateDemandeParams {
     type?: TypeDemande
     dateDemande?: Date
     statut?: StatutDemande
-    user?: User
+    visiteur?: Visiteur
 }
 
 export class DemandeUsecase {
@@ -36,11 +37,11 @@ export class DemandeUsecase {
             query.andWhere("demande.statut = :statut", { statut: listDemandeRequest.statut });
         }
 
-        if (listDemandeRequest.user) {
-            query.andWhere("demande.userId = :user", { user: listDemandeRequest.user });
+        if (listDemandeRequest.visiteur) {
+            query.andWhere("demande.visiteurId= :visiteur", { user: listDemandeRequest.visiteur });
         }
 
-        query.leftJoinAndSelect('demande.user', 'user')
+        query.leftJoinAndSelect('demande.visiteur', 'visiteur')
             .leftJoinAndSelect('demande.evenementDemandes', 'evenementDemandes')
             .leftJoinAndSelect('demande.aideProjetDemandes', 'aideProjetDemandes')
             .leftJoinAndSelect('demande.parrainageDemandes', 'parrainageDemandes')
@@ -71,12 +72,12 @@ export class DemandeUsecase {
         return demande;
     }
 
-    async updateDemande(id: number, { type, dateDemande, statut, user }: UpdateDemandeParams): Promise<Demande | string | null> {
+    async updateDemande(id: number, { type, dateDemande, statut, visiteur }: UpdateDemandeParams): Promise<Demande | string | null> {
         const repo = this.db.getRepository(Demande);
         const demandeFound = await repo.findOneBy({ id });
         if (demandeFound === null) return null;
 
-        if (type === undefined && dateDemande === undefined && statut === undefined && user === undefined) {
+        if (type === undefined && dateDemande === undefined && statut === undefined && visiteur === undefined) {
             return "No changes";
         }
 
@@ -89,8 +90,8 @@ export class DemandeUsecase {
         if (statut) {
             demandeFound.statut = statut;
         }
-        if (user) {
-            demandeFound.user = user;
+        if (visiteur) {
+            demandeFound.visiteur = visiteur;
         }
 
         const demandeUpdate = await repo.save(demandeFound);

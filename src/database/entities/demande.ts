@@ -3,6 +3,7 @@ import { User } from "./user";
 import { EvenementDemande } from "./evenementDemande";
 import { AideProjetDemande } from "./aideProjetDemande";
 import { ParrainageDemande } from "./parrainageDemande";
+import { Visiteur } from "./visiteur";
 
 
 
@@ -18,7 +19,7 @@ export enum StatutDemande {
     Acceptee = "Acceptée",
     Refusee = "Refusée"
 }
-
+ 
 @Entity()
 export class Demande {
 
@@ -35,8 +36,8 @@ export class Demande {
     @Column()
     statut: StatutDemande;
 
-    @ManyToOne(() => User, user => user.demandes)
-    user: User;
+    @ManyToOne(() => Visiteur, visiteur => visiteur.demandes)
+    visiteur: Visiteur;
 
     @OneToMany(() => EvenementDemande, evenementDemande => evenementDemande.demande)
     evenementDemandes: EvenementDemande[];
@@ -47,12 +48,12 @@ export class Demande {
     @OneToMany(() => ParrainageDemande, parrainageDemande => parrainageDemande.demande)
     parrainageDemandes: ParrainageDemande[];
 
-    constructor(id: number, type: TypeDemande,dateDemande :Date,statut:StatutDemande ,user: User, evenementDemandes: EvenementDemande[], aideProjetDemandes:AideProjetDemande[], parrainageDemandes:ParrainageDemande[]) {
+    constructor(id: number, type: TypeDemande,dateDemande :Date,statut:StatutDemande ,visiteur: Visiteur, evenementDemandes: EvenementDemande[], aideProjetDemandes:AideProjetDemande[], parrainageDemandes:ParrainageDemande[]) {
         this.id = id
         this.type = type
         this.dateDemande = dateDemande
         this.statut = statut
-        this.user = user
+        this.visiteur = visiteur
         this.evenementDemandes = evenementDemandes
         this.aideProjetDemandes = aideProjetDemandes
         this.parrainageDemandes = parrainageDemandes

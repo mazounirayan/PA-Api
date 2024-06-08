@@ -32,7 +32,7 @@ export class Tache {
     statut: StatutTache;
 
     
-    @ManyToOne(() => User, user => user.transactions)
+    @ManyToOne(() => User, user => user.taches)
     responsable: User
 
 

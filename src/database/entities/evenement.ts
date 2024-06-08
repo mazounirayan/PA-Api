@@ -25,7 +25,7 @@ export class Evenement {
     @OneToMany(() => Transaction, transactions => transactions.evenement)
     transactions: Transaction[]
 
-    @OneToMany(() => Inscription, inscriptions => inscriptions.user)
+    @OneToMany(() => Inscription, inscriptions => inscriptions.visiteur)
     inscriptions: Inscription[];
 
 

@@ -7,7 +7,7 @@ export const createEvenementDemandeValidation = Joi.object<CreateEvenementDemand
     description: Joi.string().required(),
     lieu: Joi.string().required(),
     demande: Joi.number().required()
-});
+}).options({ abortEarly: false });
 
 export interface CreateEvenementDemandeValidationRequest {
     nom: string

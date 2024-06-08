@@ -5,7 +5,7 @@ export const createEvenementValidation = Joi.object<CreateEvenementValidationReq
     date: Joi.date().required(),
     description: Joi.string().required(),
     lieu: Joi.string().required()
-});
+}).options({ abortEarly: false });
 
 export interface CreateEvenementValidationRequest {
     nom: string

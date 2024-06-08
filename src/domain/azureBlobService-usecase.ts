@@ -1,6 +1,8 @@
 // azureBlobService.ts
 import { BlobServiceClient, generateBlobSASQueryParameters, BlobSASPermissions, StorageSharedKeyCredential } from '@azure/storage-blob';
 import { addMinutes } from 'date-fns';
+import { Token } from '../database/entities/token';
+import { DataSource } from 'typeorm';
 
 const accountName = process.env.AZURE_STORAGE_ACCOUNT_NAME!;
 const accountKey = process.env.AZURE_STORAGE_ACCOUNT_KEY!;
@@ -12,38 +14,56 @@ const blobServiceClient = new BlobServiceClient(
   sharedKeyCredential
 );
 
-export async function generateSasToken(blobName: string, validityInMinutes: number = 60): Promise<string> {
-  const containerClient = blobServiceClient.getContainerClient(containerName);
 
-  const blobClient = containerClient.getBlobClient(blobName);
-  const exists = await blobClient.exists();
-  if (!exists) {
-    throw new Error('Blob not found');
-  }
+ export class AzureBlobServiceUsecase {
+  constructor(private readonly db: DataSource) { }
+    async  getBlobName(id: number): Promise<any | null> {
 
-  const sasToken = generateBlobSASQueryParameters({
-    containerName,
-    blobName,
-    permissions: BlobSASPermissions.parse('r'), 
-    startsOn: new Date(), 
-    expiresOn: addMinutes(new Date(), validityInMinutes) 
-  }, sharedKeyCredential).toString();
+      const entityManager = this.db.getRepository(Token);
 
-  return `${blobClient.url}?${sasToken}`;
-}
+      const sqlQuery = `select blobName as fileName from token where userId = ? and blobName is not null;`;
 
-export async function uploadBlob(blobName: string, buffer: Buffer, mimeType: string): Promise<void> {
-  const containerClient = blobServiceClient.getContainerClient(containerName);
-  const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+      const blobName = await entityManager.query(sqlQuery, [id]);
+      if (!blobName.length) {
+        return null;
+      }
+      return blobName;
+    }
 
-  await blockBlobClient.uploadData(buffer, {
-    blobHTTPHeaders: { blobContentType: mimeType }
-  });
-}
+    async  generateSasToken(blobName: string, validityInMinutes: number = 60): Promise<string> {
+      const containerClient = blobServiceClient.getContainerClient(containerName);
 
-export async function deleteBlob(blobName: string): Promise<void> {
-  const containerClient = blobServiceClient.getContainerClient(containerName);
-  const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+      const blobClient = containerClient.getBlobClient(blobName);
+      const exists = await blobClient.exists();
+      if (!exists) {
+        throw new Error('Blob not found');
+      }
 
-  await blockBlobClient.delete();
+      const sasToken = generateBlobSASQueryParameters({
+        containerName,
+        blobName,
+        permissions: BlobSASPermissions.parse('r'), 
+        startsOn: new Date(), 
+        expiresOn: addMinutes(new Date(), validityInMinutes) 
+      }, sharedKeyCredential).toString();
+
+      return `${blobClient.url}?${sasToken}`;
+    }
+
+    async  uploadBlob(blobName: string, buffer: Buffer, mimeType: string): Promise<void> {
+      const containerClient = blobServiceClient.getContainerClient(containerName);
+      const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+
+      await blockBlobClient.uploadData(buffer, {
+        blobHTTPHeaders: { blobContentType: mimeType }
+      });
+    }
+
+    async  deleteBlob(blobName: string): Promise<void> {
+      const containerClient = blobServiceClient.getContainerClient(containerName);
+      const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+
+      await blockBlobClient.delete();
+    }
+
 }

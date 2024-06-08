@@ -13,6 +13,13 @@ import { EvenementHandler } from "./evenement";
 import { EvenementDemandeHandler } from "./evenementDemande";
 import { AzureBlobService } from "./azureBlobService";
 import { FileVersion } from "./fileVersion";
+import { InscriptionHandler } from "./inscription";
+import { VisiteurHandler } from "./visiteur";
+import { SondageHandler } from "./sondage";
+import { AgHandler } from "./ag";
+import { PropositionHandler } from "./proposition";
+import { ParticipationAGHandler } from "./participationAG";
+import { VoteHandler } from "./vote";
 
 
 export const initRoutes = (app: express.Express) => {
@@ -35,5 +42,12 @@ export const initRoutes = (app: express.Express) => {
     EvenementDemandeHandler(app)
     AzureBlobService(app)
     FileVersion(app)
+    InscriptionHandler(app)
+    VisiteurHandler(app)
+    SondageHandler(app)
+    AgHandler(app)
+    PropositionHandler(app)
+    ParticipationAGHandler(app)
+    VoteHandler(app)
     app.use(invalidPathHandler);
 }

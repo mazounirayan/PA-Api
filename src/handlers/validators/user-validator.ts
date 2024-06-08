@@ -1,4 +1,4 @@
-import Joi from "joi";
+import Joi, { number } from "joi";
 import { User, UserRole } from "../../database/entities/user";
 
 export const createUserValidation = Joi.object<CreateUserValidationRequest>({
@@ -6,16 +6,20 @@ export const createUserValidation = Joi.object<CreateUserValidationRequest>({
     prenom: Joi.string().required(),
     email: Joi.string().email().required(),
     motDePasse: Joi.string().required(),
+    numTel: Joi.string().min(10).max(10).required(),
+    profession: Joi.string().required(),
     role: Joi.string().valid(...Object.values(UserRole)).required(),
     dateInscription: Joi.date().required(),
     estBenevole: Joi.boolean().required()
-});
+}).options({ abortEarly: false });
 
 export interface CreateUserValidationRequest {
     nom: string
     prenom: string
     email: string
     motDePasse: string
+    numTel: string
+    profession: string
     role: UserRole
     dateInscription: Date
     estBenevole: boolean
@@ -50,6 +54,8 @@ export const updateUserValidation = Joi.object<UpdateUserRequest>({
     nom: Joi.string().optional(),
     prenom: Joi.string().optional(),
     email: Joi.string().email().optional(),
+    numTel: Joi.string().min(10).max(10).optional(),
+    profession: Joi.string().optional(),
     motDePasse: Joi.string().optional(),
     role: Joi.string().valid(...Object.values(UserRole)).optional(),
     estBenevole: Joi.boolean().optional(),
@@ -63,9 +69,11 @@ export interface UpdateUserRequest {
     nom?: string
     prenom?: string
     email?: string
+    numTel?: string
+    profession?: string
     motDePasse?: string
     role?: UserRole
-    estBenevole?: boolean
+    estBenevole?: boolean   
     estEnLigne?: boolean
 
 }
@@ -75,6 +83,8 @@ export const listUserValidation = Joi.object<ListUserRequest>({
     limit: Joi.number().min(1).optional(),
     nom: Joi.string().optional(),
     prenom: Joi.string().optional(),
+    numTel: Joi.string().min(10).max(10).optional(),
+    profession: Joi.string().optional(),
     email: Joi.string().email().optional(),
     role: Joi.string().valid(...Object.values(UserRole)).optional(),
     estBenevole: Joi.boolean().optional(),
@@ -87,6 +97,8 @@ export interface ListUserRequest {
     nom?: string
     prenom?: string
     email?: string
+    numTel?: string
+    profession?: string
     role?: UserRole
     estBenevole?: boolean
     estEnLigne?: boolean

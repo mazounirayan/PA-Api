@@ -2,12 +2,13 @@ import Joi from "joi";
 import { User } from "../../database/entities/user";
 import { Evenement } from "../../database/entities/evenement";
 import { TypeTransaction } from "../../database/entities/transaction";
+import { Visiteur } from "../../database/entities/visiteur";
 
 export const createTransactionValidation = Joi.object<CreateTransactionValidationRequest>({
     montant: Joi.number().required(),
     type: Joi.string().valid('Don', 'Cotisation', 'Paiement evenement', 'Inscription').required(),
     dateTransaction: Joi.date().optional(),
-    user: Joi.number().required(),
+    visiteur: Joi.number().required(),
     evenement: Joi.number().optional()
 }).options({ abortEarly: false })
 
@@ -15,7 +16,7 @@ export interface CreateTransactionValidationRequest {
     montant: number
     type: TypeTransaction
     dateTransaction?: Date
-    user: User
+    visiteur: Visiteur
     evenement: Evenement
 }
 
@@ -32,7 +33,7 @@ export const updateTransactionValidation = Joi.object<UpdateTransactionRequest>(
     montant: Joi.number().optional(),
     type: Joi.string().valid('Don', 'Cotisation', 'Paiement evenement', 'Inscription').optional(),
     date: Joi.date().optional(),
-    user: Joi.number().optional(),
+    visiteur: Joi.number().optional(),
     evenement: Joi.number().optional()
 });
 
@@ -41,7 +42,7 @@ export interface UpdateTransactionRequest {
     montant?: number
     type?: TypeTransaction
     date?: Date
-    user?: User
+    visiteur?: Visiteur
     evenement?: Evenement
 }
 
@@ -50,7 +51,7 @@ export const listTransactionValidation = Joi.object<ListTransactionRequest>({
     limit: Joi.number().min(1).optional(),
     montant: Joi.number().optional(),
     type: Joi.string().valid('Don', 'Cotisation', 'Paiement evenement', 'Inscription').optional(),
-    user: Joi.number().optional(),
+    visiteur: Joi.number().optional(),
     evenement: Joi.number().optional()
 });
 
@@ -59,6 +60,6 @@ export interface ListTransactionRequest {
     limit: number
     montant?: number
     type?: TypeTransaction
-    user?: number
+    visiteur?: number
     evenement?: number
 }

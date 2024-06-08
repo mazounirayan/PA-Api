@@ -1,17 +1,17 @@
 import { DataSource } from "typeorm";
 import { Inscription } from "../database/entities/inscription";
-import { User } from "../database/entities/user";
 import { Evenement } from "../database/entities/evenement";
+import { Visiteur } from "../database/entities/visiteur";
 
 export interface ListInscriptionRequest {
     page: number
     limit: number
-    user?: number
+    visiteur?: number
     evenement?: number
 }
 
 export interface UpdateInscriptionParams {
-    user?: User
+    visiteur?: Visiteur
     evenement?: Evenement
 }
 
@@ -20,15 +20,15 @@ export class InscriptionUsecase {
 
     async listInscriptions(listInscriptionRequest: ListInscriptionRequest): Promise<{ Inscriptions: Inscription[]; totalCount: number; }> {
         const query = this.db.createQueryBuilder(Inscription, 'inscription');
-        if (listInscriptionRequest.user) {
-            query.andWhere("inscription.userId = :user", { user: listInscriptionRequest.user });
+        if (listInscriptionRequest.visiteur) {
+            query.andWhere("inscription.visiteurId = :visiteur", { visiteur: listInscriptionRequest.visiteur });
         }
 
         if (listInscriptionRequest.evenement) {
             query.andWhere("inscription.evenementId = :evenement", { evenement: listInscriptionRequest.evenement });
         }
 
-        query.leftJoinAndSelect('inscription.user', 'user')
+        query.leftJoinAndSelect('inscription.visiteur', 'visiteur')
             .leftJoinAndSelect('inscription.evenement', 'evenement')
             .skip((listInscriptionRequest.page - 1) * listInscriptionRequest.limit)
             .take(listInscriptionRequest.limit);
@@ -42,7 +42,7 @@ export class InscriptionUsecase {
 
     async getOneInscription(id: number): Promise<Inscription | null> {
         const query = this.db.createQueryBuilder(Inscription, 'inscription')
-            .leftJoinAndSelect('inscription.user', 'user')
+            .leftJoinAndSelect('inscription.visiteur', 'visiteur')
             .leftJoinAndSelect('inscription.evenement', 'evenement')
             .where("inscription.id = :id", { id: id });
 
@@ -55,17 +55,17 @@ export class InscriptionUsecase {
         return inscription;
     }
 
-    async updateInscription(id: number, { user, evenement }: UpdateInscriptionParams): Promise<Inscription | string | null> {
+    async updateInscription(id: number, { visiteur, evenement }: UpdateInscriptionParams): Promise<Inscription | string | null> {
         const repo = this.db.getRepository(Inscription);
         const inscriptionFound = await repo.findOneBy({ id });
         if (inscriptionFound === null) return null;
 
-        if (user === undefined && evenement === undefined) {
+        if (visiteur === undefined && evenement === undefined) {
             return "No changes";
         }
 
-        if (user) {
-            inscriptionFound.user = user;
+        if (visiteur) {
+            inscriptionFound.visiteur = visiteur;
         }
         if (evenement) {
             inscriptionFound.evenement = evenement;
