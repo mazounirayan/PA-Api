@@ -36,8 +36,8 @@ export const AzureBlobService = (app: express.Express) => {
 
             if (!blobName) {
                 res.status(200).send({ "reponse": `Aucun fichier` });
+                return
             }
-
 
             res.json({ blobName });
         } catch (error) {

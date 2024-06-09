@@ -3,17 +3,20 @@ import { Proposition, TypeProposition } from "../database/entities/proposition";
 import { Ag } from "../database/entities/ag";
 import { Sondage } from "../database/entities/sondage";
 
+
 export interface ListPropositionRequest {
     page: number
     limit: number
-    description?: string
+    question?: string
+    choix?: string
     type?: TypeProposition
     ag?: number
     sondage?: number
 }
 
 export interface UpdatePropositionParams {
-    description?: string
+    question?: string
+    choix?: string
     type?: TypeProposition
     ag?: Ag
     sondage?: Sondage
@@ -24,8 +27,12 @@ export class PropositionUsecase {
 
     async listPropositions(listPropositionRequest: ListPropositionRequest): Promise<{ Propositions: Proposition[]; totalCount: number; }> {
         const query = this.db.createQueryBuilder(Proposition, 'proposition');
-        if (listPropositionRequest.description) {
-            query.andWhere("proposition.description = :description", { description: listPropositionRequest.description });
+        if (listPropositionRequest.question) {
+            query.andWhere("proposition.question = :question", { question: listPropositionRequest.question });
+        }
+
+        if (listPropositionRequest.choix) {
+            query.andWhere("proposition.choix = :choix", { choix: listPropositionRequest.choix });
         }
 
         if (listPropositionRequest.type) {
@@ -69,17 +76,20 @@ export class PropositionUsecase {
         return proposition;
     }
 
-    async updateProposition(id: number, { description, type, ag, sondage }: UpdatePropositionParams): Promise<Proposition | string | null> {
+    async updateProposition(id: number, { question, choix, type, ag, sondage }: UpdatePropositionParams): Promise<Proposition | string | null> {
         const repo = this.db.getRepository(Proposition);
         const propositionFound = await repo.findOneBy({ id });
         if (propositionFound === null) return null;
 
-        if (description === undefined && type === undefined && ag === undefined && sondage === undefined) {
+        if (question === undefined && choix === undefined && type === undefined && ag === undefined && sondage === undefined) {
             return "No changes";
         }
 
-        if (description) {
-            propositionFound.description = description;
+        if (question) {
+            propositionFound.question = question;
+        }
+        if (choix) {
+            propositionFound.choix = choix;
         }
         if (type) {
             propositionFound.type = type;
@@ -95,3 +105,4 @@ export class PropositionUsecase {
         return propositionUpdate;
     }
 }
+

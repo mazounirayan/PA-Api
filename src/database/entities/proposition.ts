@@ -14,12 +14,14 @@ export class Proposition {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column('text')
-    description: string;
+    @Column()
+    question: string;
 
     @Column()
     type: TypeProposition;
 
+    @Column()
+    choix: string;
 
     @ManyToOne(() => Ag, ag => ag.propositions)
     ag: Ag;
@@ -30,10 +32,11 @@ export class Proposition {
     @OneToMany(() => Vote, vote => vote.proposition)
     votes: Vote[];
 
-    constructor(id:number,description: string, type: TypeProposition, ag: Ag, sondage: Sondage, votes: Vote[]) {
+    constructor(id:number,question: string, choix: string, type: TypeProposition, ag: Ag, sondage: Sondage, votes: Vote[]) {
         this.id = id;
-        this.description = description;
+        this.question = question;
         this.type = type;
+        this.choix = choix
         this.ag = ag;
         this.sondage = sondage;
         this.votes = votes;

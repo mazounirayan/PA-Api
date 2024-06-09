@@ -67,12 +67,13 @@ INSERT INTO participation_ag (userId, agId) VALUES
 (1, 1),
 (2, 1);
 
-INSERT INTO proposition (description, type, agId) VALUES
-('Proposition de modification du quorum', 'checkbox', 2);
+INSERT INTO proposition (question, type, choix, agId) VALUES
+('Satisfais de l asso ?', 'radio', 'Oui' ,2),
+('Satisfais de l asso ?', 'radio', 'Non' ,2);
 
 INSERT INTO vote (propositionId, userId, choix) VALUES
-(1, 1, 'Pour'),
-(1, 2, 'Pour');
+(1, 1, 'Oui'),
+(2, 2, 'Non');
 
 INSERT INTO transaction (montant, type, dateTransaction, visiteurId) VALUES
 (50.00, 'Cotisation', NOW(), 1),
