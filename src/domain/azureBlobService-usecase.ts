@@ -21,7 +21,7 @@ const blobServiceClient = new BlobServiceClient(
 
       const entityManager = this.db.getRepository(Token);
 
-      const sqlQuery = `select blobName as fileName from token where userId = ? and blobName is not null;`;
+      const sqlQuery = `select id, blobName as fileName from token where userId = ? and blobName is not null;`;
 
       const blobName = await entityManager.query(sqlQuery, [id]);
       if (!blobName.length) {

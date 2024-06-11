@@ -1,5 +1,6 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./user";
+import { Dossier } from "./dossier";
 
 @Entity()
 export class Token {
@@ -16,10 +17,14 @@ export class Token {
     @ManyToOne(() => User, user => user.tokens)
     user: User;
 
-    constructor(id: number, token: string, blobName:string ,user: User) {
+    @OneToMany(() => Dossier, dossier => dossier.token)
+    dossiers: Dossier[];
+
+    constructor(id: number, token: string, blobName:string ,user: User, dossiers: Dossier[]) {
         this.id = id
         this.token = token
         this.blobName = blobName
         this.user = user
+        this.dossiers = dossiers
     }
 }

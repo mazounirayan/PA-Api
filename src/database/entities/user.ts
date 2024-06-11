@@ -11,6 +11,7 @@ import { Inscription } from "./inscription"
 import { Visiteur } from "./visiteur"
 import { ParticipationAG } from "./participationAG"
 import { Vote } from "./vote"
+import { Dossier } from "./dossier"
 
 export enum UserRole {
     Visiteur = "Visiteur",
@@ -78,9 +79,12 @@ export class User {
     @OneToMany(() => Vote, vote => vote.user)
     votes: Vote[];
 
+    @OneToMany(() => Dossier, dossier => dossier.user)
+    dossiers: Dossier[];
 
 
-    constructor(id: number, nom:string, prenom:string,email: string, numTel:string ,motDePasse: string,profession:string, role: UserRole, dateInscription:Date, estBenevole: boolean,inscriptions:Inscription[], parraine:Visiteur[],tokens: Token[], participations: ParticipationAG[],taches: Tache[], votes: Vote[], parrainageDemandes:ParrainageDemande[]) {
+
+    constructor(id: number, nom:string, prenom:string,email: string, numTel:string ,motDePasse: string,profession:string, role: UserRole, dateInscription:Date, estBenevole: boolean,inscriptions:Inscription[], parraine:Visiteur[],tokens: Token[], participations: ParticipationAG[],taches: Tache[], votes: Vote[], parrainageDemandes:ParrainageDemande[], dossiers: Dossier[]) {
         this.id = id;
         this.nom = nom;
         this.prenom = prenom;
@@ -98,6 +102,7 @@ export class User {
         this.tokens = tokens;
         this.participationsAg = participations;
         this.votes = votes;
+        this.dossiers = dossiers;
 
     }
 }

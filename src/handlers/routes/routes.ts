@@ -20,6 +20,7 @@ import { AgHandler } from "./ag";
 import { PropositionHandler } from "./proposition";
 import { ParticipationAGHandler } from "./participationAG";
 import { VoteHandler } from "./vote";
+import { DossierHandler } from "./dossier";
 
 
 export const initRoutes = (app: express.Express) => {
@@ -49,5 +50,6 @@ export const initRoutes = (app: express.Express) => {
     PropositionHandler(app)
     ParticipationAGHandler(app)
     VoteHandler(app)
+    DossierHandler(app)
     app.use(invalidPathHandler);
 }

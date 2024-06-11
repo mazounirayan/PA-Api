@@ -9,7 +9,7 @@ export const createPropositionValidation = Joi.object<CreatePropositionValidatio
     type: Joi.string().valid(...Object.values(TypeProposition)).required(),
     ag: Joi.number().optional(),
     sondage: Joi.number().optional()
-});
+}).options({ abortEarly: false });
 
 export interface CreatePropositionValidationRequest {
     question: string

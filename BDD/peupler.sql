@@ -113,3 +113,61 @@ VALUES
 INSERT INTO parrainage_demande (id, parrainId, detailsParrainage, demandeId)
 VALUES 
 (3, 2, 'Parrainage pour les enfants défavorisés.', 3);
+
+
+INSERT INTO token (token, blobName, userId) VALUES
+('abc123', 'document1.pdf', 1),
+('def456', 'document2.pdf', 1),
+('def456', 'document3.pdf', 1),
+('def456', 'document4.pdf', 1);
+
+
+INSERT INTO dossier (nom, tokenId, dossierId, userId) VALUES
+('Dossier 1', 1, NULL,1),
+('Dossier 2', 2, NULL,1),
+('Dossier 3', NULL, 2,1),
+('Dossier 4', NULL, NULL,1);
+
+
+/*
+afficher les fichiers et dossiers a la racine
+SELECT T.blobName as nomFichier, T.id, 'fichier' AS Type FROM token T LEFT JOIN dossier
+D ON T.id = D.id WHERE D.tokenId IS NULL and T.userId = 1 and T.blobName is not NULL
+
+UNION ALL
+
+SELECT 
+    d.nom, 
+    d.id AS ID,
+    'dossier' AS Type 
+FROM 
+    dossier d 
+WHERE 
+    d.dossierId IS NULL AND d.userId = 1;
+
+
+---------------------
+afficher les fichiers et dossiers dans un dossier
+SELECT 
+    d1.nom AS Nom, 
+    d1.id AS dossierID,
+    'dossier' AS Type 
+  
+FROM 
+    dossier d1
+WHERE 
+    d1.dossierId = 2
+AND
+    d1.userId = 1
+
+
+UNION ALL
+
+select token.blobName, token.id, 'fichier' AS Type from token inner join dossier on token.id = dossier.tokenId where dossier.id = 2 and token.userId = 1;
+
+
+-----------------------
+afficher le dossier parent d'un dossier
+SELECT      d2.nom AS nom,      d2.id AS id,      'dossier' AS Type  FROM      dossier d1 INNER JOIN      dossier d2  ON      d1.dossierId = d2.id  WHERE      d1.id = 3 and d1.userId = 1;
+
+*/
