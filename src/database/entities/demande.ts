@@ -4,6 +4,7 @@ import { EvenementDemande } from "./evenementDemande";
 import { AideProjetDemande } from "./aideProjetDemande";
 import { ParrainageDemande } from "./parrainageDemande";
 import { Visiteur } from "./visiteur";
+import { AutreDemande } from "./autreDemande";
 
 
 
@@ -36,8 +37,11 @@ export class Demande {
     @Column()
     statut: StatutDemande;
 
-    @ManyToOne(() => Visiteur, visiteur => visiteur.demandes)
-    visiteur: Visiteur;
+    @Column()
+    emailVisiteur: string
+
+    @OneToMany(() => AutreDemande, autreDemande => autreDemande.demande)
+    autreDemandes: AutreDemande[];
 
     @OneToMany(() => EvenementDemande, evenementDemande => evenementDemande.demande)
     evenementDemandes: EvenementDemande[];
@@ -48,16 +52,15 @@ export class Demande {
     @OneToMany(() => ParrainageDemande, parrainageDemande => parrainageDemande.demande)
     parrainageDemandes: ParrainageDemande[];
 
-    constructor(id: number, type: TypeDemande,dateDemande :Date,statut:StatutDemande ,visiteur: Visiteur, evenementDemandes: EvenementDemande[], aideProjetDemandes:AideProjetDemande[], parrainageDemandes:ParrainageDemande[]) {
+    constructor(id: number, type: TypeDemande,dateDemande :Date,statut:StatutDemande ,emailVisiteur: string, evenementDemandes: EvenementDemande[], aideProjetDemandes:AideProjetDemande[], parrainageDemandes:ParrainageDemande[], autreDemandes: AutreDemande[]) {
         this.id = id
         this.type = type
         this.dateDemande = dateDemande
         this.statut = statut
-        this.visiteur = visiteur
+        this.emailVisiteur = emailVisiteur
+        this.autreDemandes = autreDemandes
         this.evenementDemandes = evenementDemandes
         this.aideProjetDemandes = aideProjetDemandes
         this.parrainageDemandes = parrainageDemandes
-
-
     }
 }

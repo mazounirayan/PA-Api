@@ -1,83 +1,92 @@
 import Joi from "joi";
+import { User } from "../../database/entities/user";
 
 export const createVisiteurValidation = Joi.object<CreateVisiteurValidationRequest>({
+    email: Joi.string().email().required(),
     nom: Joi.string().required(),
     prenom: Joi.string().required(),
-    email: Joi.string().email().required(),
-    age: Joi.number().required(),
+    age: Joi.number().integer().required(),
     numTel: Joi.string().required(),
     adresse: Joi.string().required(),
     profession: Joi.string().required(),
     dateInscription: Joi.date().required(),
-    estBenevole: Joi.boolean().required()
-}).options({ abortEarly: false });
+    estBenevole: Joi.boolean().required(),
+    parrain: Joi.number().optional()
+}).options({ abortEarly: false })
 
 export interface CreateVisiteurValidationRequest {
+    email: string
     nom: string
     prenom: string
-    email: string
     age: number
     numTel: string
     adresse: string
     profession: string
     dateInscription: Date
     estBenevole: boolean
+    parrain?: User
 }
 
-export const visiteurIdValidation = Joi.object<VisiteurIdRequest>({
-    id: Joi.number().required(),
+export const visiteurEmailValidation = Joi.object<VisiteurEmailRequest>({
+    email: Joi.string().email().required(),
 });
 
-export interface VisiteurIdRequest {
-    id: number
+export interface VisiteurEmailRequest {
+    email: string
 }
 
 export const updateVisiteurValidation = Joi.object<UpdateVisiteurRequest>({
-    id: Joi.number().required(),
+    email: Joi.string().email().required(),
     nom: Joi.string().optional(),
     prenom: Joi.string().optional(),
-    email: Joi.string().email().optional(),
-    age: Joi.number().optional(),
+    age: Joi.number().integer().optional(),
     numTel: Joi.string().optional(),
     adresse: Joi.string().optional(),
     profession: Joi.string().optional(),
-    estBenevole: Joi.boolean().optional()
+    dateInscription: Joi.date().optional(),
+    estBenevole: Joi.boolean().optional(),
+    parrain: Joi.number().optional()
 });
 
 export interface UpdateVisiteurRequest {
-    id: number
+    email: string
     nom?: string
     prenom?: string
-    email?: string
     age?: number
     numTel?: string
     adresse?: string
     profession?: string
+    dateInscription?: Date
     estBenevole?: boolean
+    parrain?: User
 }
 
 export const listVisiteurValidation = Joi.object<ListVisiteurRequest>({
     page: Joi.number().min(1).optional(),
     limit: Joi.number().min(1).optional(),
+    email: Joi.string().email().optional(),
     nom: Joi.string().optional(),
     prenom: Joi.string().optional(),
-    email: Joi.string().email().optional(),
-    age: Joi.number().optional(),
+    age: Joi.number().integer().optional(),
     numTel: Joi.string().optional(),
     adresse: Joi.string().optional(),
     profession: Joi.string().optional(),
-    estBenevole: Joi.boolean().optional()
+    dateInscription: Joi.date().optional(),
+    estBenevole: Joi.boolean().optional(),
+    parrain: Joi.number().optional()
 });
 
 export interface ListVisiteurRequest {
     page: number
     limit: number
+    email?: string
     nom?: string
     prenom?: string
-    email?: string
     age?: number
     numTel?: string
     adresse?: string
     profession?: string
+    dateInscription?: Date
     estBenevole?: boolean
+    parrain?: number
 }

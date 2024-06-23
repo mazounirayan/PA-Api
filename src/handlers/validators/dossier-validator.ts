@@ -9,7 +9,7 @@ export const createDossierValidation = Joi.object<CreateDossierValidationRequest
     token: Joi.number().required(),
     dossier: Joi.number().optional(),
     user: Joi.number().required()
-});
+}).options({ abortEarly: false })
 
 export interface CreateDossierValidationRequest {
     nom: string

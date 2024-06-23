@@ -5,7 +5,7 @@ import { AideProjetDemande } from "../database/entities/aideProjetDemande";
 export interface ListAideProjetDemandeRequest {
     page: number
     limit: number
-    nom?: string
+    titre?: string
     descriptionProjet?: string
     budget?: number
     deadline?: Date
@@ -13,7 +13,7 @@ export interface ListAideProjetDemandeRequest {
 }
 
 export interface UpdateAideProjetDemandeParams {
-    nom?: string
+    titre?: string
     descriptionProjet?: string
     budget?: number
     deadline?: Date
@@ -25,8 +25,8 @@ export class AideProjetDemandeUsecase {
 
     async listAideProjetDemandes(listAideProjetDemandeRequest: ListAideProjetDemandeRequest): Promise<{ AideProjetDemandes: AideProjetDemande[]; totalCount: number; }> {
         const query = this.db.createQueryBuilder(AideProjetDemande, 'aideProjetDemande');
-        if (listAideProjetDemandeRequest.nom) {
-            query.andWhere("aideProjetDemande.nom = :nom", { nom: listAideProjetDemandeRequest.nom });
+        if (listAideProjetDemandeRequest.titre) {
+            query.andWhere("aideProjetDemande.titre = :titre", { titre: listAideProjetDemandeRequest.titre });
         }
 
         if (listAideProjetDemandeRequest.descriptionProjet) {
@@ -70,17 +70,17 @@ export class AideProjetDemandeUsecase {
         return aideProjetDemande;
     }
 
-    async updateAideProjetDemande(id: number, { nom, descriptionProjet, budget, deadline, demande }: UpdateAideProjetDemandeParams): Promise<AideProjetDemande | string | null> {
+    async updateAideProjetDemande(id: number, { titre, descriptionProjet, budget, deadline, demande }: UpdateAideProjetDemandeParams): Promise<AideProjetDemande | string | null> {
         const repo = this.db.getRepository(AideProjetDemande);
         const aideProjetDemandeFound = await repo.findOneBy({ id });
         if (aideProjetDemandeFound === null) return null;
 
-        if (nom === undefined && descriptionProjet === undefined && budget === undefined && deadline === undefined && demande === undefined) {
+        if (titre === undefined && descriptionProjet === undefined && budget === undefined && deadline === undefined && demande === undefined) {
             return "No changes";
         }
 
-        if (nom) {
-            aideProjetDemandeFound.nom = nom;
+        if (titre) {
+            aideProjetDemandeFound.titre = titre;
         }
         if (descriptionProjet) {
             aideProjetDemandeFound.descriptionProjet = descriptionProjet;

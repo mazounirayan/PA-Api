@@ -11,7 +11,7 @@ export class AideProjetDemande {
     id: number;
 
     @Column()
-    nom: string;
+    titre: string;
 
 
     @Column()
@@ -28,7 +28,7 @@ export class AideProjetDemande {
 
     constructor(id: number, nom: string, descriptionProjet:string, budget:number, deadline:Date ,demande: Demande) {
         this.id = id
-        this.nom = nom
+        this.titre = nom
         this.descriptionProjet = descriptionProjet
         this.budget = budget
         this.deadline = deadline

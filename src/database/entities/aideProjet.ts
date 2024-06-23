@@ -7,7 +7,7 @@ export class AideProjet {
     id: number;
 
     @Column()
-    nom: string;
+    titre: string;
 
     @Column()
     descriptionProjet: string;
@@ -20,7 +20,7 @@ export class AideProjet {
 
     constructor(id: number, nom: string, descriptionProjet: string, budget: number, deadline: Date) {
         this.id = id;
-        this.nom = nom;
+        this.titre = nom;
         this.descriptionProjet = descriptionProjet;
         this.budget = budget;
         this.deadline = deadline;

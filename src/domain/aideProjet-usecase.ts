@@ -4,14 +4,14 @@ import { AideProjet } from "../database/entities/aideProjet";
 export interface ListAideProjetRequest {
     page: number
     limit: number
-    nom?: string
+    titre?: string
     descriptionProjet?: string
     budget?: number
     deadline?: Date
 }
 
 export interface UpdateAideProjetParams {
-    nom?: string
+    titre?: string
     descriptionProjet?: string
     budget?: number
     deadline?: Date
@@ -22,8 +22,8 @@ export class AideProjetUsecase {
 
     async listAideProjets(listAideProjetRequest: ListAideProjetRequest): Promise<{ AideProjets: AideProjet[]; totalCount: number; }> {
         const query = this.db.createQueryBuilder(AideProjet, 'aideProjet');
-        if (listAideProjetRequest.nom) {
-            query.andWhere("aideProjet.nom = :nom", { nom: listAideProjetRequest.nom });
+        if (listAideProjetRequest.titre) {
+            query.andWhere("aideProjet.titre = :titre", { titre: listAideProjetRequest.titre });
         }
 
         if (listAideProjetRequest.descriptionProjet) {
@@ -61,17 +61,17 @@ export class AideProjetUsecase {
         return aideProjet;
     }
 
-    async updateAideProjet(id: number, { nom, descriptionProjet, budget, deadline }: UpdateAideProjetParams): Promise<AideProjet | string | null> {
+    async updateAideProjet(id: number, { titre, descriptionProjet, budget, deadline }: UpdateAideProjetParams): Promise<AideProjet | string | null> {
         const repo = this.db.getRepository(AideProjet);
         const aideProjetFound = await repo.findOneBy({ id });
         if (aideProjetFound === null) return null;
 
-        if (nom === undefined && descriptionProjet === undefined && budget === undefined && deadline === undefined) {
+        if (titre === undefined && descriptionProjet === undefined && budget === undefined && deadline === undefined) {
             return "No changes";
         }
 
-        if (nom) {
-            aideProjetFound.nom = nom;
+        if (titre) {
+            aideProjetFound.titre = titre;
         }
         if (descriptionProjet) {
             aideProjetFound.descriptionProjet = descriptionProjet;

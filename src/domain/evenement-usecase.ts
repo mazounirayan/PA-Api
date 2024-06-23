@@ -1,6 +1,6 @@
 import { DataSource } from "typeorm";
 import { Evenement } from "../database/entities/evenement";
-import { Transaction } from "../database/entities/transaction";
+import { Ressource } from "../database/entities/ressource";
 
 export interface ListEvenementRequest {
     page: number
@@ -9,6 +9,9 @@ export interface ListEvenementRequest {
     date?: Date
     description?: string
     lieu?: string
+    estReserve?: boolean
+    nbPlace?: number
+    ressource?: number
 }
 
 export interface UpdateEvenementParams {
@@ -16,6 +19,9 @@ export interface UpdateEvenementParams {
     date?: Date
     description?: string
     lieu?: string
+    estReserve?: boolean
+    nbPlace?: number
+    ressource?: Ressource
 }
 
 export class EvenementUsecase {
@@ -39,7 +45,21 @@ export class EvenementUsecase {
             query.andWhere("evenement.lieu = :lieu", { lieu: listEvenementRequest.lieu });
         }
 
-        query.leftJoinAndSelect('evenement.transactions', 'transactions')
+        if (listEvenementRequest.estReserve !== undefined) {
+            query.andWhere("evenement.estReserve = :estReserve", { estReserve: listEvenementRequest.estReserve });
+        }
+
+        if (listEvenementRequest.nbPlace !== undefined) {
+            query.andWhere("evenement.nbPlace = :nbPlace", { nbPlace: listEvenementRequest.nbPlace });
+        }
+
+        if (listEvenementRequest.ressource) {
+            query.andWhere("evenement.ressourceId = :ressource", { ressource: listEvenementRequest.ressource });
+        }
+
+        query.leftJoinAndSelect('evenement.ressource', 'ressource')
+            .leftJoinAndSelect('evenement.transactions', 'transactions')
+            .leftJoinAndSelect('evenement.inscriptions', 'inscriptions')
             .skip((listEvenementRequest.page - 1) * listEvenementRequest.limit)
             .take(listEvenementRequest.limit);
 
@@ -52,7 +72,9 @@ export class EvenementUsecase {
 
     async getOneEvenement(id: number): Promise<Evenement | null> {
         const query = this.db.createQueryBuilder(Evenement, 'evenement')
+            .leftJoinAndSelect('evenement.ressource', 'ressource')
             .leftJoinAndSelect('evenement.transactions', 'transactions')
+            .leftJoinAndSelect('evenement.inscriptions', 'inscriptions')
             .where("evenement.id = :id", { id: id });
 
         const evenement = await query.getOne();
@@ -64,12 +86,12 @@ export class EvenementUsecase {
         return evenement;
     }
 
-    async updateEvenement(id: number, { nom, date, description, lieu }: UpdateEvenementParams): Promise<Evenement | string | null> {
+    async updateEvenement(id: number, { nom, date, description, lieu, estReserve, nbPlace, ressource }: UpdateEvenementParams): Promise<Evenement | string | null> {
         const repo = this.db.getRepository(Evenement);
         const evenementFound = await repo.findOneBy({ id });
         if (evenementFound === null) return null;
 
-        if (nom === undefined && date === undefined && description === undefined && lieu === undefined) {
+        if (nom === undefined && date === undefined && description === undefined && lieu === undefined && estReserve === undefined && nbPlace === undefined && ressource === undefined) {
             return "No changes";
         }
 
@@ -84,6 +106,15 @@ export class EvenementUsecase {
         }
         if (lieu) {
             evenementFound.lieu = lieu;
+        }
+        if (estReserve !== undefined) {
+            evenementFound.estReserve = estReserve;
+        }
+        if (nbPlace !== undefined) {
+            evenementFound.nbPlace = nbPlace;
+        }
+        if (ressource) {
+            evenementFound.ressource = ressource;
         }
 
         const evenementUpdate = await repo.save(evenementFound);

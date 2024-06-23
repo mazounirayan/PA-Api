@@ -6,7 +6,7 @@ export const createAgValidation = Joi.object<CreateAgValidationRequest>({
     description: Joi.string().required(),
     type: Joi.string().max(50).required(),
     quorum: Joi.number().integer().required()
-});
+}).options({ abortEarly: false })
 
 export interface CreateAgValidationRequest {
     nom: string

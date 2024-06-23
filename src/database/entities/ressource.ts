@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany, Ma
 import "reflect-metadata"
 
 import { Reservation } from "./reservation"
+import { Evenement } from "./evenement"
 
 export enum TypeRessource{
     Vetement = "Vetement",
@@ -34,11 +35,15 @@ export class Ressource {
     @Column()
     emplacement: string
 
-    constructor(id: number, nom:string,type:TypeRessource,emplacement:string, quantite:number ,reservations:Reservation[]) {
+    @OneToMany(() => Evenement, evenement => evenement.ressource)
+    evenements: Evenement[]
+
+    constructor(id: number, nom:string,type:TypeRessource,emplacement:string, quantite:number ,evenements:Evenement[]) {
         this.id = id;
         this.nom = nom;
         this.type = type;
         this.quantite = quantite;
         this.emplacement = emplacement;
+        this.evenements = evenements;
     }
 }

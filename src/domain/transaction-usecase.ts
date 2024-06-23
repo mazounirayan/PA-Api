@@ -6,17 +6,19 @@ import { Visiteur } from "../database/entities/visiteur";
 export interface ListTransactionRequest {
     page: number
     limit: number
-    montant?: number
-    type?: string
-    visiteur?: number
+    emailVisiteur?: string
     evenement?: number
+    montant?: number
+    type?: TypeTransaction
+    dateTransaction?: Date
 }
 
 export interface UpdateTransactionParams {
+    emailVisiteur?: string
+    evenement?: Evenement
     montant?: number
     type?: TypeTransaction
-    visiteur?: Visiteur
-    evenement?: Evenement
+    dateTransaction?: Date
 }
 
 export class TransactionUsecase {
@@ -24,6 +26,14 @@ export class TransactionUsecase {
 
     async listTransactions(listTransactionRequest: ListTransactionRequest): Promise<{ Transactions: Transaction[]; totalCount: number; }> {
         const query = this.db.createQueryBuilder(Transaction, 'transaction');
+        if (listTransactionRequest.emailVisiteur) {
+            query.andWhere("transaction.emailVisiteur = :emailVisiteur", { emailVisiteur: listTransactionRequest.emailVisiteur });
+        }
+
+        if (listTransactionRequest.evenement) {
+            query.andWhere("transaction.evenementId = :evenement", { evenement: listTransactionRequest.evenement });
+        }
+
         if (listTransactionRequest.montant) {
             query.andWhere("transaction.montant = :montant", { montant: listTransactionRequest.montant });
         }
@@ -32,16 +42,11 @@ export class TransactionUsecase {
             query.andWhere("transaction.type = :type", { type: listTransactionRequest.type });
         }
 
-        if (listTransactionRequest.visiteur) {
-            query.andWhere("transaction.visiteurId = :visiteur", { visiteur: listTransactionRequest.visiteur });
+        if (listTransactionRequest.dateTransaction) {
+            query.andWhere("transaction.dateTransaction = :dateTransaction", { dateTransaction: listTransactionRequest.dateTransaction });
         }
 
-        if (listTransactionRequest.evenement) {
-            query.andWhere("transaction.evenementId = :evenement", { evenement: listTransactionRequest.evenement });
-        }
-
-        query.leftJoinAndSelect('transaction.visiteur', 'visiteur')
-            .leftJoinAndSelect('transaction.evenement', 'evenement')
+        query.leftJoinAndSelect('transaction.evenement', 'evenement')
             .skip((listTransactionRequest.page - 1) * listTransactionRequest.limit)
             .take(listTransactionRequest.limit);
 
@@ -54,7 +59,6 @@ export class TransactionUsecase {
 
     async getOneTransaction(id: number): Promise<Transaction | null> {
         const query = this.db.createQueryBuilder(Transaction, 'transaction')
-            .leftJoinAndSelect('transaction.visiteur', 'visiteur')
             .leftJoinAndSelect('transaction.evenement', 'evenement')
             .where("transaction.id = :id", { id: id });
 
@@ -67,26 +71,29 @@ export class TransactionUsecase {
         return transaction;
     }
 
-    async updateTransaction(id: number, { montant, type, visiteur, evenement }: UpdateTransactionParams): Promise<Transaction | string | null> {
+    async updateTransaction(id: number, { emailVisiteur, evenement, montant, type, dateTransaction }: UpdateTransactionParams): Promise<Transaction | string | null> {
         const repo = this.db.getRepository(Transaction);
         const transactionFound = await repo.findOneBy({ id });
         if (transactionFound === null) return null;
 
-        if (montant === undefined && type === undefined && visiteur === undefined && evenement === undefined) {
+        if (emailVisiteur === undefined && evenement === undefined && montant === undefined && type === undefined && dateTransaction === undefined) {
             return "No changes";
         }
 
-        if (montant) {
+        if (emailVisiteur) {
+            transactionFound.emailVisiteur = emailVisiteur;
+        }
+        if (evenement) {
+            transactionFound.evenement = evenement;
+        }
+        if (montant !== undefined) {
             transactionFound.montant = montant;
         }
         if (type) {
             transactionFound.type = type;
         }
-        if (visiteur) {
-            transactionFound.visiteur = visiteur;
-        }
-        if (evenement) {
-            transactionFound.evenement = evenement;
+        if (dateTransaction) {
+            transactionFound.dateTransaction = dateTransaction;
         }
 
         const transactionUpdate = await repo.save(transactionFound);

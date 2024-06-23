@@ -4,7 +4,7 @@ import { Demande } from "./demande";
 
 
 @Entity()
-export class EvenementDemande {
+export class AutreDemande {
 
     @PrimaryGeneratedColumn()
     id: number;
@@ -12,25 +12,16 @@ export class EvenementDemande {
     @Column()
     titre: string;
 
-
-    @Column()
-    date: Date;
-
     @Column()
     description: string;
 
-    @Column()
-    lieu: string
-
-    @ManyToOne(() => Demande, demande => demande.evenementDemandes)
+    @ManyToOne(() => Demande, demande => demande.autreDemandes)
     demande: Demande;
 
-    constructor(id: number, nom: string,date :Date,description:string, lieu:string ,demande: Demande) {
+    constructor(id: number, titre:string ,description:string, demande: Demande) {
         this.id = id
-        this.titre = nom
-        this.date = date
+        this.titre = titre
         this.description = description
-        this.lieu = lieu
         this.demande = demande
     }
 }

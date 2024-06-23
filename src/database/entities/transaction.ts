@@ -7,7 +7,6 @@ import { Visiteur } from "./visiteur"
 export enum TypeTransaction {
     Don = "Don",
     PaiementCotisations = "Cotisation",
-    PaiementEvenement = "Paiement evenement",
     Inscription = "Inscription"
 }
 
@@ -17,8 +16,8 @@ export class Transaction {
     @PrimaryGeneratedColumn()
     id: number
 
-    @ManyToOne(() => Visiteur, visiteur => visiteur.transactions)
-    visiteur: Visiteur
+    @Column()
+    emailVisiteur: string
 
 
     @ManyToOne(() => Evenement, evenement => evenement.transactions)
@@ -37,17 +36,12 @@ export class Transaction {
     dateTransaction:Date
     
 
-    constructor(id: number, montant:number,type:TypeTransaction,dateTransaction:Date,visiteur:Visiteur,evenement:Evenement) {
+    constructor(id: number, montant:number,type:TypeTransaction,dateTransaction:Date,emailVisiteur:string,evenement:Evenement) {
         this.id = id;
         this.montant = montant;
         this.type = type;
         this.dateTransaction = dateTransaction;
-        this.visiteur = visiteur;
+        this.emailVisiteur = emailVisiteur;
         this.evenement = evenement;
     }
-
-
-
-
-
 }

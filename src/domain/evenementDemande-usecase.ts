@@ -5,7 +5,7 @@ import { EvenementDemande } from "../database/entities/evenementDemande";
 export interface ListEvenementDemandeRequest {
     page: number
     limit: number
-    nom?: string
+    titre?: string
     date?: Date
     description?: string
     lieu?: string
@@ -13,7 +13,7 @@ export interface ListEvenementDemandeRequest {
 }
 
 export interface UpdateEvenementDemandeParams {
-    nom?: string
+    titre?: string
     date?: Date
     description?: string
     lieu?: string
@@ -25,8 +25,8 @@ export class EvenementDemandeUsecase {
 
     async listEvenementDemandes(listEvenementDemandeRequest: ListEvenementDemandeRequest): Promise<{ EvenementDemandes: EvenementDemande[]; totalCount: number; }> {
         const query = this.db.createQueryBuilder(EvenementDemande, 'evenementDemande');
-        if (listEvenementDemandeRequest.nom) {
-            query.andWhere("evenementDemande.nom = :nom", { nom: listEvenementDemandeRequest.nom });
+        if (listEvenementDemandeRequest.titre) {
+            query.andWhere("evenementDemande.titre = :titre", { titre: listEvenementDemandeRequest.titre });
         }
 
         if (listEvenementDemandeRequest.date) {
@@ -70,17 +70,17 @@ export class EvenementDemandeUsecase {
         return evenementDemande;
     }
 
-    async updateEvenementDemande(id: number, { nom, date, description, lieu, demande }: UpdateEvenementDemandeParams): Promise<EvenementDemande | string | null> {
+    async updateEvenementDemande(id: number, { titre, date, description, lieu, demande }: UpdateEvenementDemandeParams): Promise<EvenementDemande | string | null> {
         const repo = this.db.getRepository(EvenementDemande);
         const evenementDemandeFound = await repo.findOneBy({ id });
         if (evenementDemandeFound === null) return null;
 
-        if (nom === undefined && date === undefined && description === undefined && lieu === undefined && demande === undefined) {
+        if (titre === undefined && date === undefined && description === undefined && lieu === undefined && demande === undefined) {
             return "No changes";
         }
 
-        if (nom) {
-            evenementDemandeFound.nom = nom;
+        if (titre) {
+            evenementDemandeFound.titre = titre;
         }
         if (date) {
             evenementDemandeFound.date = date;

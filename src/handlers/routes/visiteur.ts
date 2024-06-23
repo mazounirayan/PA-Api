@@ -3,7 +3,7 @@ import { AppDataSource } from "../../database/database";
 import { Visiteur } from "../../database/entities/visiteur";
 import { VisiteurUsecase } from "../../domain/visiteur-usecase";
 import { generateValidationErrorMessage } from "../validators/generate-validation-message";
-import { listVisiteurValidation, createVisiteurValidation, visiteurIdValidation, updateVisiteurValidation } from "../validators/visiteur-validator";
+import { listVisiteurValidation, createVisiteurValidation, updateVisiteurValidation, visiteurEmailValidation } from "../validators/visiteur-validator";
 
 export const VisiteurHandler = (app: express.Express) => {
     app.get("/visiteurs", async (req: Request, res: Response) => {
@@ -51,20 +51,20 @@ export const VisiteurHandler = (app: express.Express) => {
         }
     });
 
-    app.delete("/visiteurs/:id", async (req: Request, res: Response) => {
+    app.delete("/visiteurs/:email", async (req: Request, res: Response) => {
         try {
-            const validationResult = visiteurIdValidation.validate(req.params);
+            const validationResult = visiteurEmailValidation.validate(req.params);
 
             if (validationResult.error) {
                 res.status(400).send(generateValidationErrorMessage(validationResult.error.details));
                 return;
             }
-            const visiteurId = validationResult.value;
+            const visiteurEmail = validationResult.value;
 
             const visiteurRepository = AppDataSource.getRepository(Visiteur);
-            const visiteur = await visiteurRepository.findOneBy({ id: visiteurId.id });
+            const visiteur = await visiteurRepository.findOneBy({ email: visiteurEmail.email });
             if (visiteur === null) {
-                res.status(404).send({ "error": `Visiteur ${visiteurId.id} not found` });
+                res.status(404).send({ "error": `Visiteur ${visiteurEmail.email} not found` });
                 return;
             }
 
@@ -76,20 +76,20 @@ export const VisiteurHandler = (app: express.Express) => {
         }
     });
 
-    app.get("/visiteurs/:id", async (req: Request, res: Response) => {
+    app.get("/visiteurs/:email", async (req: Request, res: Response) => {
         try {
-            const validationResult = visiteurIdValidation.validate(req.params);
+            const validationResult = visiteurEmailValidation.validate(req.params);
 
             if (validationResult.error) {
                 res.status(400).send(generateValidationErrorMessage(validationResult.error.details));
                 return;
             }
-            const visiteurId = validationResult.value;
+            const visiteurEmail = validationResult.value;
 
             const visiteurUsecase = new VisiteurUsecase(AppDataSource);
-            const visiteur = await visiteurUsecase.getOneVisiteur(visiteurId.id);
+            const visiteur = await visiteurUsecase.getOneVisiteur(visiteurEmail.email);
             if (visiteur === null) {
-                res.status(404).send({ "error": `Visiteur ${visiteurId.id} not found` });
+                res.status(404).send({ "error": `Visiteur ${visiteurEmail.email} not found` });
                 return;
             }
             res.status(200).send(visiteur);
@@ -99,7 +99,7 @@ export const VisiteurHandler = (app: express.Express) => {
         }
     });
 
-    app.patch("/visiteurs/:id", async (req: Request, res: Response) => {
+    app.patch("/visiteurs/:email", async (req: Request, res: Response) => {
         const validation = updateVisiteurValidation.validate({ ...req.params, ...req.body });
 
         if (validation.error) {
@@ -112,7 +112,7 @@ export const VisiteurHandler = (app: express.Express) => {
         try {
             const visiteurUsecase = new VisiteurUsecase(AppDataSource);
 
-            const validationResult = visiteurIdValidation.validate(req.params);
+            const validationResult = visiteurEmailValidation.validate(req.params);
 
             if (validationResult.error) {
                 res.status(400).send(generateValidationErrorMessage(validationResult.error.details));
@@ -120,12 +120,12 @@ export const VisiteurHandler = (app: express.Express) => {
             }
 
             const updatedVisiteur = await visiteurUsecase.updateVisiteur(
-                updateVisiteurRequest.id,
+                updateVisiteurRequest.email,
                 { ...updateVisiteurRequest }
             );
 
             if (updatedVisiteur === null) {
-                res.status(404).send({ "error": `Visiteur ${updateVisiteurRequest.id} not found` });
+                res.status(404).send({ "error": `Visiteur ${updateVisiteurRequest.email} not found` });
                 return;
             }
 

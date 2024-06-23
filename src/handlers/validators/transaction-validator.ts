@@ -1,23 +1,21 @@
 import Joi from "joi";
-import { User } from "../../database/entities/user";
 import { Evenement } from "../../database/entities/evenement";
 import { TypeTransaction } from "../../database/entities/transaction";
-import { Visiteur } from "../../database/entities/visiteur";
 
 export const createTransactionValidation = Joi.object<CreateTransactionValidationRequest>({
+    emailVisiteur: Joi.string().email().required(),
+    evenement: Joi.number().required(),
     montant: Joi.number().required(),
-    type: Joi.string().valid('Don', 'Cotisation', 'Paiement evenement', 'Inscription').required(),
-    dateTransaction: Joi.date().optional(),
-    visiteur: Joi.number().required(),
-    evenement: Joi.number().optional()
+    type: Joi.string().valid(...Object.values(TypeTransaction)).required(),
+    dateTransaction: Joi.date().required()
 }).options({ abortEarly: false })
 
 export interface CreateTransactionValidationRequest {
+    emailVisiteur: string
+    evenement: Evenement
     montant: number
     type: TypeTransaction
-    dateTransaction?: Date
-    visiteur: Visiteur
-    evenement: Evenement
+    dateTransaction: Date
 }
 
 export const transactionIdValidation = Joi.object<TransactionIdRequest>({
@@ -30,36 +28,38 @@ export interface TransactionIdRequest {
 
 export const updateTransactionValidation = Joi.object<UpdateTransactionRequest>({
     id: Joi.number().required(),
+    emailVisiteur: Joi.string().email().optional(),
+    evenement: Joi.number().optional(),
     montant: Joi.number().optional(),
-    type: Joi.string().valid('Don', 'Cotisation', 'Paiement evenement', 'Inscription').optional(),
-    date: Joi.date().optional(),
-    visiteur: Joi.number().optional(),
-    evenement: Joi.number().optional()
+    type: Joi.string().valid(...Object.values(TypeTransaction)).optional(),
+    dateTransaction: Joi.date().optional()
 });
 
 export interface UpdateTransactionRequest {
     id: number
+    emailVisiteur?: string
+    evenement?: Evenement
     montant?: number
     type?: TypeTransaction
-    date?: Date
-    visiteur?: Visiteur
-    evenement?: Evenement
+    dateTransaction?: Date
 }
 
 export const listTransactionValidation = Joi.object<ListTransactionRequest>({
     page: Joi.number().min(1).optional(),
     limit: Joi.number().min(1).optional(),
+    emailVisiteur: Joi.string().email().optional(),
+    evenement: Joi.number().optional(),
     montant: Joi.number().optional(),
-    type: Joi.string().valid('Don', 'Cotisation', 'Paiement evenement', 'Inscription').optional(),
-    visiteur: Joi.number().optional(),
-    evenement: Joi.number().optional()
+    type: Joi.string().valid(...Object.values(TypeTransaction)).optional(),
+    dateTransaction: Joi.date().optional()
 });
 
 export interface ListTransactionRequest {
     page: number
     limit: number
+    emailVisiteur?: string
+    evenement?: number
     montant?: number
     type?: TypeTransaction
-    visiteur?: number
-    evenement?: number
+    dateTransaction?: Date
 }

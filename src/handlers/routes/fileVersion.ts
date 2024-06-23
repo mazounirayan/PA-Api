@@ -10,7 +10,15 @@ export const FileVersion = (app: express.Express) => {
             const repo = process.env.GITHUB_REPO;
             const apiUrl = process.env.GITHUB_API_URL;
 
-            const response = await axios.get(`${apiUrl}/repos/${repo}/contents`);
+            if (!githubToken || !repo || !apiUrl) {
+                return res.status(500).send({ error: 'Environment variables are not set' });
+            }
+
+            const headers = {
+                'Authorization': `token ${githubToken}`
+            };
+
+            const response = await axios.get(`${apiUrl}/repos/${repo}/contents`, { headers });
 
             const files = response.data;
             const versionFile = files.find((file: any) => file.name.startsWith('version_'));

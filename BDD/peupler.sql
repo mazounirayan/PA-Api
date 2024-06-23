@@ -49,14 +49,14 @@ INSERT INTO tache (Description, dateDebut, dateFin, statut, responsableId) VALUE
 ("Préparer le matériel pour l\'événement", NOW(), NOW(), 'En cours', 1),
 ('Contacter les fournisseurs', NOW(), NOW(), 'En cours', 2);
 
-INSERT INTO evenement (nom, date, description, lieu) VALUES
-('Gala Annuel', NOW() + INTERVAL 1 MONTH, "Le gala annuel de l\'association", 'Salle des fêtes'),
-("Conférence sur l\'éducation", NOW() + INTERVAL 2 MONTH, 'Conférence sur les échanges éducatifs', 'Amphithéâtre Central');
+INSERT INTO evenement (nom, date, description, lieu, nbPlace) VALUES
+('Gala Annuel', NOW() + INTERVAL 1 MONTH, "Le gala annuel de l\'association", 'Salle des fêtes',10),
+("Conférence sur l\'éducation", NOW() + INTERVAL 2 MONTH, 'Conférence sur les échanges éducatifs', 'Amphithéâtre Central',15);
 
-INSERT INTO inscription (visiteurId, evenementId) VALUES
-(1, 1),
-(2, 1),
-(3, 2);
+INSERT INTO inscription (emailVisiteur, evenementId) VALUES
+("test@gmail1.com", 1),
+("test@gmail2.com", 1),
+("test@gmail3.com", 2);
 
 INSERT INTO ag (nom, date, description, type, quorum) VALUES
 ('AG Annuelle 2024', NOW() + INTERVAL 3 MONTH, 'Discussion sur les bilans et projets futurs', 'Ordinaire', 15),
@@ -75,12 +75,12 @@ INSERT INTO vote (propositionId, userId, choix) VALUES
 (1, 1, 'Oui'),
 (2, 2, 'Non');
 
-INSERT INTO transaction (montant, type, dateTransaction, visiteurId) VALUES
-(50.00, 'Cotisation', NOW(), 1),
-(100.00, 'Don', NOW(), 2);
+INSERT INTO transaction (montant, type, dateTransaction, emailVisiteur) VALUES
+(50.00, 'Cotisation', NOW(), "test@gmail.com"),
+(100.00, 'Don', NOW(), "test@gmail.com");
 
-INSERT INTO transaction (montant, type, dateTransaction, visiteurId, evenementId) VALUES
-(10.00, 'Inscription', NOW(),3,1);
+INSERT INTO transaction (montant, type, dateTransaction, emailVisiteur, evenementId) VALUES
+(10.00, 'Inscription', NOW(),"test@gmail.com",1);
 
 
 
@@ -92,21 +92,21 @@ INSERT INTO ressource (nom, type,  quantite) VALUES
 /*INSERT INTO reservation (dateDebut, dateFin, description, ressourceId, UserId) VALUES
 (NOW(), NOW() + INTERVAL 2 HOUR, 'Réunion du bureau', 1, 1);*/
 
-INSERT INTO demande (type, dateDemande, statut, visiteurId)
+INSERT INTO demande (type, dateDemande, statut, emailVisiteur)
 VALUES 
-('Evénement', '2024-05-19 14:30:00', 'En attente',1),
-('Projet', '2024-05-20 10:00:00', 'Acceptée',2),
-('Parrainage', '2024-05-21 08:45:00', 'Refusée',3);
+('Evénement', '2024-05-19 14:30:00', 'En attente',"test@gmail.com"),
+('Projet', '2024-05-20 10:00:00', 'Acceptée',"test@gmail.com"),
+('Parrainage', '2024-05-21 08:45:00', 'Refusée',"test@gmail.com");
 
-INSERT INTO evenement_demande (id, nom, date, description, lieu, demandeId)
+INSERT INTO evenement_demande (id, titre, date, description, lieu, demandeId)
 VALUES 
 (1, 'Festival de Musique', '2024-07-15 18:00:00', 'Un grand festival de musique avec des artistes internationaux.', 'Parc Central',1);
 
-INSERT INTO aide_projet (nom, descriptionProjet, budget, deadline)
+INSERT INTO aide_projet (titre, descriptionProjet, budget, deadline)
 VALUES 
 ('Projet de Reforestation', 'Un projet visant à planter des arbres dans les zones déforestées.', 5000.00, '2024-12-31 00:00:00');
 
-INSERT INTO aide_projet_demande (id, nom, descriptionProjet, budget, deadline, demandeId)
+INSERT INTO aide_projet_demande (id, titre, descriptionProjet, budget, deadline, demandeId)
 VALUES 
 (2, 'Projet de Reforestation', 'Un projet visant à planter des arbres dans les zones déforestées.', 5000.00, '2024-12-31 00:00:00', 2);
 

@@ -1,23 +1,21 @@
 import { DataSource } from "typeorm";
 import { Demande, StatutDemande, TypeDemande } from "../database/entities/demande";
-import { User } from "../database/entities/user";
-import { Visiteur } from "../database/entities/visiteur";
 
 
 export interface ListDemandeRequest {
     page: number
     limit: number
-    type?: string
+    type?: TypeDemande
     dateDemande?: Date
-    statut?: string
-    visiteur?: number
+    statut?: StatutDemande
+    emailVisiteur?: string
 }
 
 export interface UpdateDemandeParams {
     type?: TypeDemande
     dateDemande?: Date
     statut?: StatutDemande
-    visiteur?: Visiteur
+    emailVisiteur?: string
 }
 
 export class DemandeUsecase {
@@ -37,12 +35,11 @@ export class DemandeUsecase {
             query.andWhere("demande.statut = :statut", { statut: listDemandeRequest.statut });
         }
 
-        if (listDemandeRequest.visiteur) {
-            query.andWhere("demande.visiteurId= :visiteur", { user: listDemandeRequest.visiteur });
+        if (listDemandeRequest.emailVisiteur) {
+            query.andWhere("demande.emailVisiteur = :emailVisiteur", { emailVisiteur: listDemandeRequest.emailVisiteur });
         }
 
-        query.leftJoinAndSelect('demande.visiteur', 'visiteur')
-            .leftJoinAndSelect('demande.evenementDemandes', 'evenementDemandes')
+        query.leftJoinAndSelect('demande.evenementDemandes', 'evenementDemandes')
             .leftJoinAndSelect('demande.aideProjetDemandes', 'aideProjetDemandes')
             .leftJoinAndSelect('demande.parrainageDemandes', 'parrainageDemandes')
             .skip((listDemandeRequest.page - 1) * listDemandeRequest.limit)
@@ -57,7 +54,6 @@ export class DemandeUsecase {
 
     async getOneDemande(id: number): Promise<Demande | null> {
         const query = this.db.createQueryBuilder(Demande, 'demande')
-            .leftJoinAndSelect('demande.user', 'user')
             .leftJoinAndSelect('demande.evenementDemandes', 'evenementDemandes')
             .leftJoinAndSelect('demande.aideProjetDemandes', 'aideProjetDemandes')
             .leftJoinAndSelect('demande.parrainageDemandes', 'parrainageDemandes')
@@ -72,12 +68,12 @@ export class DemandeUsecase {
         return demande;
     }
 
-    async updateDemande(id: number, { type, dateDemande, statut, visiteur }: UpdateDemandeParams): Promise<Demande | string | null> {
+    async updateDemande(id: number, { type, dateDemande, statut, emailVisiteur }: UpdateDemandeParams): Promise<Demande | string | null> {
         const repo = this.db.getRepository(Demande);
         const demandeFound = await repo.findOneBy({ id });
         if (demandeFound === null) return null;
 
-        if (type === undefined && dateDemande === undefined && statut === undefined && visiteur === undefined) {
+        if (type === undefined && dateDemande === undefined && statut === undefined && emailVisiteur === undefined) {
             return "No changes";
         }
 
@@ -90,8 +86,8 @@ export class DemandeUsecase {
         if (statut) {
             demandeFound.statut = statut;
         }
-        if (visiteur) {
-            demandeFound.visiteur = visiteur;
+        if (emailVisiteur) {
+            demandeFound.emailVisiteur = emailVisiteur;
         }
 
         const demandeUpdate = await repo.save(demandeFound);

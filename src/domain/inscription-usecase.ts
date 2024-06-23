@@ -6,12 +6,12 @@ import { Visiteur } from "../database/entities/visiteur";
 export interface ListInscriptionRequest {
     page: number
     limit: number
-    visiteur?: number
+    emailVisiteur?: string
     evenement?: number
 }
 
 export interface UpdateInscriptionParams {
-    visiteur?: Visiteur
+    emailVisiteur?: string
     evenement?: Evenement
 }
 
@@ -20,16 +20,15 @@ export class InscriptionUsecase {
 
     async listInscriptions(listInscriptionRequest: ListInscriptionRequest): Promise<{ Inscriptions: Inscription[]; totalCount: number; }> {
         const query = this.db.createQueryBuilder(Inscription, 'inscription');
-        if (listInscriptionRequest.visiteur) {
-            query.andWhere("inscription.visiteurId = :visiteur", { visiteur: listInscriptionRequest.visiteur });
+        if (listInscriptionRequest.emailVisiteur) {
+            query.andWhere("inscription.emailVisiteur = :emailVisiteur", { emailVisiteur: listInscriptionRequest.emailVisiteur });
         }
 
         if (listInscriptionRequest.evenement) {
             query.andWhere("inscription.evenementId = :evenement", { evenement: listInscriptionRequest.evenement });
         }
 
-        query.leftJoinAndSelect('inscription.visiteur', 'visiteur')
-            .leftJoinAndSelect('inscription.evenement', 'evenement')
+        query.leftJoinAndSelect('inscription.evenement', 'evenement')
             .skip((listInscriptionRequest.page - 1) * listInscriptionRequest.limit)
             .take(listInscriptionRequest.limit);
 
@@ -42,7 +41,6 @@ export class InscriptionUsecase {
 
     async getOneInscription(id: number): Promise<Inscription | null> {
         const query = this.db.createQueryBuilder(Inscription, 'inscription')
-            .leftJoinAndSelect('inscription.visiteur', 'visiteur')
             .leftJoinAndSelect('inscription.evenement', 'evenement')
             .where("inscription.id = :id", { id: id });
 
@@ -55,17 +53,17 @@ export class InscriptionUsecase {
         return inscription;
     }
 
-    async updateInscription(id: number, { visiteur, evenement }: UpdateInscriptionParams): Promise<Inscription | string | null> {
+    async updateInscription(id: number, { emailVisiteur, evenement }: UpdateInscriptionParams): Promise<Inscription | string | null> {
         const repo = this.db.getRepository(Inscription);
         const inscriptionFound = await repo.findOneBy({ id });
         if (inscriptionFound === null) return null;
 
-        if (visiteur === undefined && evenement === undefined) {
+        if (emailVisiteur === undefined && evenement === undefined) {
             return "No changes";
         }
 
-        if (visiteur) {
-            inscriptionFound.visiteur = visiteur;
+        if (emailVisiteur) {
+            inscriptionFound.emailVisiteur = emailVisiteur;
         }
         if (evenement) {
             inscriptionFound.evenement = evenement;

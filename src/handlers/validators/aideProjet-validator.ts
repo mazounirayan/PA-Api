@@ -1,14 +1,14 @@
 import Joi from "joi";
 
 export const createAideProjetValidation = Joi.object<CreateAideProjetValidationRequest>({
-    nom: Joi.string().required(),
+    titre: Joi.string().required(),
     descriptionProjet: Joi.string().required(),
     budget: Joi.number().required(),
     deadline: Joi.date().required()
 }).options({ abortEarly: false });
 
 export interface CreateAideProjetValidationRequest {
-    nom: string
+    titre: string
     descriptionProjet: string
     budget: number
     deadline: Date
@@ -24,7 +24,7 @@ export interface AideProjetIdRequest {
 
 export const updateAideProjetValidation = Joi.object<UpdateAideProjetRequest>({
     id: Joi.number().required(),
-    nom: Joi.string().optional(),
+    titre: Joi.string().optional(),
     descriptionProjet: Joi.string().optional(),
     budget: Joi.number().optional(),
     deadline: Joi.date().optional()
@@ -32,7 +32,7 @@ export const updateAideProjetValidation = Joi.object<UpdateAideProjetRequest>({
 
 export interface UpdateAideProjetRequest {
     id: number
-    nom?: string
+    titre?: string
     descriptionProjet?: string
     budget?: number
     deadline?: Date
@@ -41,7 +41,7 @@ export interface UpdateAideProjetRequest {
 export const listAideProjetValidation = Joi.object<ListAideProjetRequest>({
     page: Joi.number().min(1).optional(),
     limit: Joi.number().min(1).optional(),
-    nom: Joi.string().optional(),
+    titre: Joi.string().optional(),
     descriptionProjet: Joi.string().optional(),
     budget: Joi.number().optional(),
     deadline: Joi.date().optional()
@@ -50,7 +50,7 @@ export const listAideProjetValidation = Joi.object<ListAideProjetRequest>({
 export interface ListAideProjetRequest {
     page: number
     limit: number
-    nom?: string
+    titre?: string
     descriptionProjet?: string
     budget?: number
     deadline?: Date

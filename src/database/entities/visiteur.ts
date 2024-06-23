@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany, ManyToOne} from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany, ManyToOne, PrimaryColumn} from "typeorm"
 import "reflect-metadata"
 import { User } from "./user"
 import { Demande } from "./demande"
@@ -8,19 +8,17 @@ import { Transaction } from "./transaction"
 
 @Entity()
 export class Visiteur {
-    @PrimaryGeneratedColumn()
-    id: number
+
+    @PrimaryColumn({
+        unique: true
+    })
+    email: string
 
     @Column()
     nom: string
 
     @Column()
     prenom: string
-
-    @Column({
-        unique: true
-    })
-    email: string
 
     @Column()
     age: number
@@ -44,17 +42,9 @@ export class Visiteur {
     @ManyToOne(() => User, user => user.parraine)
     parrain: User;
 
-    @OneToMany(() => Transaction, transactions => transactions.visiteur)
-    transactions: Transaction[];
 
-    @OneToMany(() => Inscription, inscriptions => inscriptions.visiteur)
-    inscriptions: Inscription[];
 
-    @OneToMany(() => Demande, demande => demande.visiteur)
-    demandes: Demande[];
-
-    constructor(id: number, nom: string, prenom: string, email: string, age: number, numTel: string, adresse: string, profession: string, dateInscription: Date, estBenevole: boolean, parrain: User, transactions: Transaction[], inscriptions: Inscription[], demandes: Demande[]) {
-        this.id = id
+    constructor(nom: string, prenom: string, email: string, age: number, numTel: string, adresse: string, profession: string, dateInscription: Date, estBenevole: boolean, parrain: User) {
         this.nom = nom
         this.prenom = prenom
         this.email = email
@@ -65,8 +55,5 @@ export class Visiteur {
         this.dateInscription = dateInscription
         this.estBenevole = estBenevole
         this.parrain = parrain
-        this.transactions = transactions;
-        this.inscriptions = inscriptions;
-        this.demandes = demandes
     }
 }

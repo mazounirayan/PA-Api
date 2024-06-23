@@ -1,14 +1,18 @@
 import Joi from "joi";
-import { User } from "../../database/entities/user";
 import { TypeDemande, StatutDemande } from "../../database/entities/demande";
 
 export const createDemandeValidation = Joi.object<CreateDemandeValidationRequest>({
     type: Joi.string().valid(...Object.values(TypeDemande)).required(),
-    user: Joi.number().required()
+    dateDemande: Joi.date().required(),
+    statut: Joi.string().valid(...Object.values(StatutDemande)).required(),
+    emailVisiteur: Joi.string().email().required()
 }).options({ abortEarly: false })
+
 export interface CreateDemandeValidationRequest {
     type: TypeDemande
-    user: User
+    dateDemande: Date
+    statut: StatutDemande
+    emailVisiteur: string
 }
 
 export const demandeIdValidation = Joi.object<DemandeIdRequest>({
@@ -24,7 +28,7 @@ export const updateDemandeValidation = Joi.object<UpdateDemandeRequest>({
     type: Joi.string().valid(...Object.values(TypeDemande)).optional(),
     dateDemande: Joi.date().optional(),
     statut: Joi.string().valid(...Object.values(StatutDemande)).optional(),
-    user: Joi.number().optional()
+    emailVisiteur: Joi.string().email().optional()
 });
 
 export interface UpdateDemandeRequest {
@@ -32,7 +36,7 @@ export interface UpdateDemandeRequest {
     type?: TypeDemande
     dateDemande?: Date
     statut?: StatutDemande
-    user?: User
+    emailVisiteur?: string
 }
 
 export const listDemandeValidation = Joi.object<ListDemandeRequest>({
@@ -41,7 +45,7 @@ export const listDemandeValidation = Joi.object<ListDemandeRequest>({
     type: Joi.string().valid(...Object.values(TypeDemande)).optional(),
     dateDemande: Joi.date().optional(),
     statut: Joi.string().valid(...Object.values(StatutDemande)).optional(),
-    user: Joi.number().optional()
+    emailVisiteur: Joi.string().email().optional()
 });
 
 export interface ListDemandeRequest {
@@ -50,5 +54,5 @@ export interface ListDemandeRequest {
     type?: TypeDemande
     dateDemande?: Date
     statut?: StatutDemande
-    user?: number
+    emailVisiteur?: string
 }

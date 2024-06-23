@@ -18,10 +18,9 @@ CREATE TABLE user (
 );
 
 CREATE TABLE visiteur (
-    id INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
     prenom VARCHAR(100) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL PRIMARY KEY,
     age INT,
     numTel VARCHAR(10),
     adresse VARCHAR(255),
@@ -73,6 +72,8 @@ CREATE TABLE evenement (
     description TEXT NOT NULL,
     lieu VARCHAR(255) NOT NULL,
     idRessource INT,
+    nbPlace INT,
+    estReserve BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (idRessource) REFERENCES ressource(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -86,10 +87,11 @@ CREATE TABLE evenement_ressource (
 );
 
 CREATE TABLE inscription (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    visiteurId INT NOT NULL,
+    id INT AUTO_INCREMENT,
+    emailVisiteur VARCHAR(255) NOT NULL,
     evenementId INT NOT NULL,
-    FOREIGN KEY (visiteurId) REFERENCES visiteur(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    PRIMARY KEY (id),
+    UNIQUE (emailVisiteur),
     FOREIGN KEY (evenementId) REFERENCES evenement(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -139,14 +141,14 @@ CREATE TABLE vote (
 );
 
 CREATE TABLE transaction (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id INT AUTO_INCREMENT,
     montant FLOAT NOT NULL,
-    type ENUM('Don', 'Cotisation', 'Paiement evenement', 'Inscription') NOT NULL,
+    type ENUM('Don', 'Cotisation', 'Inscription') NOT NULL,
     dateTransaction TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    visiteurId INT NOT NULL,
+    emailVisiteur VARCHAR(255) NOT NULL,
     evenementId INT DEFAULT NULL,
-    FOREIGN KEY (evenementId) REFERENCES evenement(id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (visiteurId) REFERENCES visiteur(id) ON DELETE CASCADE ON UPDATE CASCADE
+    PRIMARY KEY (id),
+    FOREIGN KEY (evenementId) REFERENCES evenement(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 
@@ -181,18 +183,26 @@ CREATE TABLE dossier (
 );
 
 CREATE TABLE demande(
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id INT AUTO_INCREMENT,
     type ENUM('Projet','Evénement','Parrainage','Autre'),
     dateDemande TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     statut ENUM('En attente','Acceptée','Refusée') DEFAULT 'En attente',
-    visiteurId INT NOT NULL,
-    FOREIGN KEY (visiteurId) REFERENCES visiteur(id) ON DELETE CASCADE ON UPDATE CASCADE
+    emailVisiteur VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE autre_demande (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    demandeId INT,
+    titre VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    FOREIGN KEY (demandeId) REFERENCES demande(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE evenement_demande (
     id INT AUTO_INCREMENT PRIMARY KEY,
     demandeId INT,
-    nom VARCHAR(255) NOT NULL,
+    titre VARCHAR(255) NOT NULL,
     date DATETIME NOT NULL,
     description TEXT NOT NULL,
     lieu VARCHAR(255) NOT NULL,
@@ -203,7 +213,7 @@ CREATE TABLE evenement_demande (
 CREATE TABLE aide_projet_demande (
     id INT AUTO_INCREMENT PRIMARY KEY,
     demandeId INT,
-    nom VARCHAR(255),
+    titre VARCHAR(255),
     descriptionProjet TEXT,
     budget FLOAT DEFAULT 0.0,
     deadline DATETIME,
@@ -221,7 +231,7 @@ CREATE TABLE parrainage_demande (
 
 CREATE TABLE aide_projet(
     id INT AUTO_INCREMENT PRIMARY KEY,
-    nom VARCHAR(255),
+    titre VARCHAR(255),
     descriptionProjet TEXT,
     budget FLOAT DEFAULT 0.0,
     deadline DATETIME

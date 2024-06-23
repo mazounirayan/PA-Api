@@ -1,14 +1,13 @@
 import Joi from "joi";
 import { Evenement } from "../../database/entities/evenement";
-import { Visiteur } from "../../database/entities/visiteur";
 
 export const createInscriptionValidation = Joi.object<CreateInscriptionValidationRequest>({
-    visiteur: Joi.number().required(),
+    emailVisiteur: Joi.string().email().required(),
     evenement: Joi.number().required()
-}).options({ abortEarly: false });
+}).options({ abortEarly: false })
 
 export interface CreateInscriptionValidationRequest {
-    visiteur: Visiteur
+    emailVisiteur: string
     evenement: Evenement
 }
 
@@ -22,26 +21,26 @@ export interface InscriptionIdRequest {
 
 export const updateInscriptionValidation = Joi.object<UpdateInscriptionRequest>({
     id: Joi.number().required(),
-    visiteur: Joi.number().optional(),
+    emailVisiteur: Joi.string().email().optional(),
     evenement: Joi.number().optional()
 });
 
 export interface UpdateInscriptionRequest {
     id: number
-    visiteur?: Visiteur
+    emailVisiteur?: string
     evenement?: Evenement
 }
 
 export const listInscriptionValidation = Joi.object<ListInscriptionRequest>({
     page: Joi.number().min(1).optional(),
     limit: Joi.number().min(1).optional(),
-    visiteur: Joi.number().optional(),
+    emailVisiteur: Joi.string().email().optional(),
     evenement: Joi.number().optional()
 });
 
 export interface ListInscriptionRequest {
     page: number
     limit: number
-    visiteur?: number
+    emailVisiteur?: string
     evenement?: number
 }

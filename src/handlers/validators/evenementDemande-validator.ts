@@ -2,7 +2,7 @@ import Joi from "joi";
 import { Demande } from "../../database/entities/demande";
 
 export const createEvenementDemandeValidation = Joi.object<CreateEvenementDemandeValidationRequest>({
-    nom: Joi.string().required(),
+    titre: Joi.string().required(),
     date: Joi.date().required(),
     description: Joi.string().required(),
     lieu: Joi.string().required(),
@@ -10,7 +10,7 @@ export const createEvenementDemandeValidation = Joi.object<CreateEvenementDemand
 }).options({ abortEarly: false });
 
 export interface CreateEvenementDemandeValidationRequest {
-    nom: string
+    titre: string
     date: Date
     description: string
     lieu: string
@@ -27,7 +27,7 @@ export interface EvenementDemandeIdRequest {
 
 export const updateEvenementDemandeValidation = Joi.object<UpdateEvenementDemandeRequest>({
     id: Joi.number().required(),
-    nom: Joi.string().optional(),
+    titre: Joi.string().optional(),
     date: Joi.date().optional(),
     description: Joi.string().optional(),
     lieu: Joi.string().optional(),
@@ -36,7 +36,7 @@ export const updateEvenementDemandeValidation = Joi.object<UpdateEvenementDemand
 
 export interface UpdateEvenementDemandeRequest {
     id: number
-    nom?: string
+    titre?: string
     date?: Date
     description?: string
     lieu?: string
@@ -46,7 +46,7 @@ export interface UpdateEvenementDemandeRequest {
 export const listEvenementDemandeValidation = Joi.object<ListEvenementDemandeRequest>({
     page: Joi.number().min(1).optional(),
     limit: Joi.number().min(1).optional(),
-    nom: Joi.string().optional(),
+    titre: Joi.string().optional(),
     date: Joi.date().optional(),
     description: Joi.string().optional(),
     lieu: Joi.string().optional(),
@@ -56,7 +56,7 @@ export const listEvenementDemandeValidation = Joi.object<ListEvenementDemandeReq
 export interface ListEvenementDemandeRequest {
     page: number
     limit: number
-    nom?: string
+    titre?: string
     date?: Date
     description?: string
     lieu?: string

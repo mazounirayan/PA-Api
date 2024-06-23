@@ -2,7 +2,7 @@ import Joi from "joi";
 import { Demande } from "../../database/entities/demande";
 
 export const createAideProjetDemandeValidation = Joi.object<CreateAideProjetDemandeValidationRequest>({
-    nom: Joi.string().required(),
+    titre: Joi.string().required(),
     descriptionProjet: Joi.string().required(),
     budget: Joi.number().required(),
     deadline: Joi.date().required(),
@@ -10,7 +10,7 @@ export const createAideProjetDemandeValidation = Joi.object<CreateAideProjetDema
 }).options({ abortEarly: false })
 
 export interface CreateAideProjetDemandeValidationRequest {
-    nom: string
+    titre: string
     descriptionProjet: string
     budget: number
     deadline: Date
@@ -27,7 +27,7 @@ export interface AideProjetDemandeIdRequest {
 
 export const updateAideProjetDemandeValidation = Joi.object<UpdateAideProjetDemandeRequest>({
     id: Joi.number().required(),
-    nom: Joi.string().optional(),
+    titre: Joi.string().optional(),
     descriptionProjet: Joi.string().optional(),
     budget: Joi.number().optional(),
     deadline: Joi.date().optional(),
@@ -36,7 +36,7 @@ export const updateAideProjetDemandeValidation = Joi.object<UpdateAideProjetDema
 
 export interface UpdateAideProjetDemandeRequest {
     id: number
-    nom?: string
+    titre?: string
     descriptionProjet?: string
     budget?: number
     deadline?: Date
@@ -46,7 +46,7 @@ export interface UpdateAideProjetDemandeRequest {
 export const listAideProjetDemandeValidation = Joi.object<ListAideProjetDemandeRequest>({
     page: Joi.number().min(1).optional(),
     limit: Joi.number().min(1).optional(),
-    nom: Joi.string().optional(),
+    titre: Joi.string().optional(),
     descriptionProjet: Joi.string().optional(),
     budget: Joi.number().optional(),
     deadline: Joi.date().optional(),
@@ -56,7 +56,7 @@ export const listAideProjetDemandeValidation = Joi.object<ListAideProjetDemandeR
 export interface ListAideProjetDemandeRequest {
     page: number
     limit: number
-    nom?: string
+    titre?: string
     descriptionProjet?: string
     budget?: number
     deadline?: Date

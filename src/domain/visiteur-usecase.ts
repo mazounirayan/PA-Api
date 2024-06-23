@@ -1,28 +1,33 @@
 import { DataSource } from "typeorm"
 import { Visiteur } from "../database/entities/visiteur"
+import { User } from "../database/entities/user"
 
 export interface ListVisiteurRequest {
     page: number
     limit: number
+    email?: string
     nom?: string
     prenom?: string
-    email?: string
     age?: number
     numTel?: string
     adresse?: string
     profession?: string
+    dateInscription?: Date
     estBenevole?: boolean
+    parrain?: number
 }
 
 export interface UpdateVisiteurParams {
+    email?: string
     nom?: string
     prenom?: string
-    email?: string
     age?: number
     numTel?: string
     adresse?: string
     profession?: string
+    dateInscription?: Date
     estBenevole?: boolean
+    parrain?: User
 }
 
 export class VisiteurUsecase {
@@ -30,6 +35,10 @@ export class VisiteurUsecase {
 
     async listVisiteurs(listVisiteurRequest: ListVisiteurRequest): Promise<{ Visiteurs: Visiteur[]; totalCount: number; }> {
         const query = this.db.createQueryBuilder(Visiteur, 'visiteur');
+        if (listVisiteurRequest.email) {
+            query.andWhere("visiteur.email = :email", { email: listVisiteurRequest.email });
+        }
+
         if (listVisiteurRequest.nom) {
             query.andWhere("visiteur.nom = :nom", { nom: listVisiteurRequest.nom });
         }
@@ -38,11 +47,7 @@ export class VisiteurUsecase {
             query.andWhere("visiteur.prenom = :prenom", { prenom: listVisiteurRequest.prenom });
         }
 
-        if (listVisiteurRequest.email) {
-            query.andWhere("visiteur.email = :email", { email: listVisiteurRequest.email });
-        }
-
-        if (listVisiteurRequest.age !== undefined) {
+        if (listVisiteurRequest.age) {
             query.andWhere("visiteur.age = :age", { age: listVisiteurRequest.age });
         }
 
@@ -58,14 +63,19 @@ export class VisiteurUsecase {
             query.andWhere("visiteur.profession = :profession", { profession: listVisiteurRequest.profession });
         }
 
+        if (listVisiteurRequest.dateInscription) {
+            query.andWhere("visiteur.dateInscription = :dateInscription", { dateInscription: listVisiteurRequest.dateInscription });
+        }
+
         if (listVisiteurRequest.estBenevole !== undefined) {
             query.andWhere("visiteur.estBenevole = :estBenevole", { estBenevole: listVisiteurRequest.estBenevole });
         }
 
+        if (listVisiteurRequest.parrain) {
+            query.andWhere("visiteur.parrainId = :parrain", { parrain: listVisiteurRequest.parrain });
+        }
+
         query.leftJoinAndSelect('visiteur.parrain', 'parrain')
-            .leftJoinAndSelect('visiteur.transactions', 'transactions')
-            .leftJoinAndSelect('visiteur.inscriptions', 'inscriptions')
-            .leftJoinAndSelect('visiteur.demandes', 'demandes')
             .skip((listVisiteurRequest.page - 1) * listVisiteurRequest.limit)
             .take(listVisiteurRequest.limit);
 
@@ -76,29 +86,26 @@ export class VisiteurUsecase {
         };
     }
 
-    async getOneVisiteur(id: number): Promise<Visiteur | null> {
+    async getOneVisiteur(email: string): Promise<Visiteur | null> {
         const query = this.db.createQueryBuilder(Visiteur, 'visiteur')
             .leftJoinAndSelect('visiteur.parrain', 'parrain')
-            .leftJoinAndSelect('visiteur.transactions', 'transactions')
-            .leftJoinAndSelect('visiteur.inscriptions', 'inscriptions')
-            .leftJoinAndSelect('visiteur.demandes', 'demandes')
-            .where("visiteur.id = :id", { id: id });
+            .where("visiteur.email = :email", { email: email });
 
         const visiteur = await query.getOne();
 
         if (!visiteur) {
-            console.log({ error: `Visiteur ${id} not found` });
+            console.log({ error: `Visiteur ${email} not found` });
             return null;
         }
         return visiteur;
     }
 
-    async updateVisiteur(id: number, { nom, prenom, email, age, numTel, adresse, profession, estBenevole }: UpdateVisiteurParams): Promise<Visiteur | string | null> {
+    async updateVisiteur(email: string, { nom, prenom, age, numTel, adresse, profession, dateInscription, estBenevole, parrain }: UpdateVisiteurParams): Promise<Visiteur | string | null> {
         const repo = this.db.getRepository(Visiteur);
-        const visiteurFound = await repo.findOneBy({ id });
+        const visiteurFound = await repo.findOneBy({ email });
         if (visiteurFound === null) return null;
 
-        if (nom === undefined && prenom === undefined && email === undefined && age === undefined && numTel === undefined && adresse === undefined && profession === undefined && estBenevole === undefined) {
+        if (nom === undefined && prenom === undefined && age === undefined && numTel === undefined && adresse === undefined && profession === undefined && dateInscription === undefined && estBenevole === undefined && parrain === undefined) {
             return "No changes";
         }
 
@@ -107,9 +114,6 @@ export class VisiteurUsecase {
         }
         if (prenom) {
             visiteurFound.prenom = prenom;
-        }
-        if (email) {
-            visiteurFound.email = email;
         }
         if (age !== undefined) {
             visiteurFound.age = age;
@@ -123,8 +127,14 @@ export class VisiteurUsecase {
         if (profession) {
             visiteurFound.profession = profession;
         }
+        if (dateInscription) {
+            visiteurFound.dateInscription = dateInscription;
+        }
         if (estBenevole !== undefined) {
             visiteurFound.estBenevole = estBenevole;
+        }
+        if (parrain) {
+            visiteurFound.parrain = parrain;
         }
 
         const visiteurUpdate = await repo.save(visiteurFound);
