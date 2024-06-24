@@ -1,6 +1,7 @@
 import express from "express";
 import { initRoutes } from "./handlers/routes/routes";
 import { AppDataSource } from "./database/database";
+import cors from 'cors';
 //import 'dotenv/config';
 //import { swaggerDocs } from "./swagger/swagger";
 //import "reflect-metadata"
@@ -21,7 +22,7 @@ import { AppDataSource } from "./database/database";
             } */
 const main = async () => {
     const app = express()
-    const port = 3000
+    const port = 3006
 
     try {
 
@@ -32,6 +33,8 @@ const main = async () => {
         console.error("Cannot contact database")
         process.exit(1)
     }
+    app.use(cors());
+   
 
     app.use(express.json())
     
