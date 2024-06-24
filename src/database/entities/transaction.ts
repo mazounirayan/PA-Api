@@ -33,14 +33,13 @@ export class Transaction {
     type: TypeTransaction;
 
     @CreateDateColumn({type: "datetime"})
-    dateTransaction:Date
+    dateTransaction?:Date
     
 
     constructor(id: number, montant:number,type:TypeTransaction,dateTransaction:Date,emailVisiteur:string,evenement:Evenement) {
         this.id = id;
         this.montant = montant;
         this.type = type;
-        this.dateTransaction = dateTransaction;
         this.emailVisiteur = emailVisiteur;
         this.evenement = evenement;
     }

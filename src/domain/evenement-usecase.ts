@@ -54,7 +54,7 @@ export class EvenementUsecase {
         }
 
         if (listEvenementRequest.ressource) {
-            query.andWhere("evenement.ressourceId = :ressource", { ressource: listEvenementRequest.ressource });
+            query.andWhere("evenement.ressource = :ressource", { ressource: listEvenementRequest.ressource });
         }
 
         query.leftJoinAndSelect('evenement.ressource', 'ressource')

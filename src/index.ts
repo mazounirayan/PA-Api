@@ -1,30 +1,15 @@
 import express from "express";
 import { initRoutes } from "./handlers/routes/routes";
 import { AppDataSource } from "./database/database";
-//import 'dotenv/config';
-//import { swaggerDocs } from "./swagger/swagger";
-//import "reflect-metadata"
 
-
-/**            const validationResult = userIdValidation.validate({ ...req.params, ...req.body });
-
-
-            if (validationResult.error) {
-                res.status(400).send(generateValidationErrorMessage(validationResult.error.details));
-                return;
-            }
-
-            const userUsecase = new UserUsecase(AppDataSource);
-            if(!await userUsecase.verifUser(+req.params.id, req.body.token)){
-                res.status(400).send({ "error": `Bad user` });
-                return;
-            } */
 const main = async () => {
     const app = express()
     const port = 3000
 
     try {
-
+        
+        var cors = require('cors')
+        app.use(cors()) // Use this after the variable declaration
         await AppDataSource.initialize()
         console.error("well connected to database")
     } catch (error) {

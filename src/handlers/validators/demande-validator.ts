@@ -3,14 +3,12 @@ import { TypeDemande, StatutDemande } from "../../database/entities/demande";
 
 export const createDemandeValidation = Joi.object<CreateDemandeValidationRequest>({
     type: Joi.string().valid(...Object.values(TypeDemande)).required(),
-    dateDemande: Joi.date().required(),
     statut: Joi.string().valid(...Object.values(StatutDemande)).required(),
     emailVisiteur: Joi.string().email().required()
 }).options({ abortEarly: false })
 
 export interface CreateDemandeValidationRequest {
     type: TypeDemande
-    dateDemande: Date
     statut: StatutDemande
     emailVisiteur: string
 }
@@ -26,7 +24,6 @@ export interface DemandeIdRequest {
 export const updateDemandeValidation = Joi.object<UpdateDemandeRequest>({
     id: Joi.number().required(),
     type: Joi.string().valid(...Object.values(TypeDemande)).optional(),
-    dateDemande: Joi.date().optional(),
     statut: Joi.string().valid(...Object.values(StatutDemande)).optional(),
     emailVisiteur: Joi.string().email().optional()
 });
@@ -34,7 +31,6 @@ export const updateDemandeValidation = Joi.object<UpdateDemandeRequest>({
 export interface UpdateDemandeRequest {
     id: number
     type?: TypeDemande
-    dateDemande?: Date
     statut?: StatutDemande
     emailVisiteur?: string
 }

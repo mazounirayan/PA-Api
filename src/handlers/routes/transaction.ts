@@ -5,6 +5,7 @@ import { generateValidationErrorMessage } from "../validators/generate-validatio
 import { listTransactionValidation, createTransactionValidation, transactionIdValidation, updateTransactionValidation } from '../validators/transaction-validator';
 import { TransactionUsecase } from '../../domain/transaction-usecase';
 import { Transaction } from '../../database/entities/transaction';
+import Stripe from 'stripe';
 
 export const TransactionHandler = (app: express.Express) => {
     app.get("/transactions", async (req: Request, res: Response) => {
@@ -32,22 +33,42 @@ export const TransactionHandler = (app: express.Express) => {
         }
     });
 
+
+
+
+
+
+
+
     app.post("/transactions" ,async (req: Request, res: Response) => {
         const validation = createTransactionValidation.validate(req.body)
+        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2024-04-10' });
 
         if (validation.error) {
             res.status(400).send(generateValidationErrorMessage(validation.error.details))
             return
         }
 
+
         const transactionRequest = validation.value
         const transactionRepo = AppDataSource.getRepository(Transaction)
+
+        const amountInCents = Math.round(validation.value.montant * 100);
+
+        if (amountInCents < 50) { // 0.50 EUR minimum en centimes
+            return res.status(400).send({ error: 'Amount must be at least €0.50 eur' });
+        }
+
         try {
+            const paymentIntent = await stripe.paymentIntents.create({
+                amount: amountInCents,
+                currency: 'eur',
+            });
 
             const transactionCreated = await transactionRepo.save(
                 transactionRequest
             )
-            res.status(201).send(transactionCreated)
+            res.status(201).send({transactionCréé: transactionCreated, clientSecret: paymentIntent.client_secret})
         } catch (error) {
             console.log(error);
             res.status(500).send({ error: "Internal error" })
