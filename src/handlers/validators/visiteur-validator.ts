@@ -9,7 +9,6 @@ export const createVisiteurValidation = Joi.object<CreateVisiteurValidationReque
     numTel: Joi.string().required(),
     adresse: Joi.string().required(),
     profession: Joi.string().required(),
-    dateInscription: Joi.date().required(),
     estBenevole: Joi.boolean().required(),
     parrain: Joi.number().optional()
 }).options({ abortEarly: false })
@@ -22,7 +21,6 @@ export interface CreateVisiteurValidationRequest {
     numTel: string
     adresse: string
     profession: string
-    dateInscription: Date
     estBenevole: boolean
     parrain?: User
 }
@@ -43,7 +41,6 @@ export const updateVisiteurValidation = Joi.object<UpdateVisiteurRequest>({
     numTel: Joi.string().optional(),
     adresse: Joi.string().optional(),
     profession: Joi.string().optional(),
-    dateInscription: Joi.date().optional(),
     estBenevole: Joi.boolean().optional(),
     parrain: Joi.number().optional()
 });
@@ -56,7 +53,6 @@ export interface UpdateVisiteurRequest {
     numTel?: string
     adresse?: string
     profession?: string
-    dateInscription?: Date
     estBenevole?: boolean
     parrain?: User
 }

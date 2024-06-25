@@ -34,26 +34,19 @@ export const TransactionHandler = (app: express.Express) => {
     });
 
 
-
-
-
-
-
-
-    app.post("/transactions" ,async (req: Request, res: Response) => {
-        const validation = createTransactionValidation.validate(req.body)
-        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2024-04-10' });
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2024-04-10' });
+    app.post("/transactions", async (req: Request, res: Response) => {
+        const validation = createTransactionValidation.validate(req.body);
 
         if (validation.error) {
-            res.status(400).send(generateValidationErrorMessage(validation.error.details))
-            return
+            res.status(400).send(generateValidationErrorMessage(validation.error.details));
+            return;
         }
 
+        const transactionRequest = validation.value;
+        const transactionRepo = AppDataSource.getRepository(Transaction);
 
-        const transactionRequest = validation.value
-        const transactionRepo = AppDataSource.getRepository(Transaction)
-
-        const amountInCents = Math.round(validation.value.montant * 100);
+        const amountInCents = Math.round(transactionRequest.montant * 100);
 
         if (amountInCents < 50) { // 0.50 EUR minimum en centimes
             return res.status(400).send({ error: 'Amount must be at least €0.50 eur' });
@@ -63,17 +56,18 @@ export const TransactionHandler = (app: express.Express) => {
             const paymentIntent = await stripe.paymentIntents.create({
                 amount: amountInCents,
                 currency: 'eur',
+                payment_method: transactionRequest.methodePaiement, // Assurez-vous que ce champ est envoyé dans le corps de la requête
+                confirm: true,
+                return_url: 'http://localhost:5173/don', // Remplacez par votre URL de retour
             });
 
-            const transactionCreated = await transactionRepo.save(
-                transactionRequest
-            )
-            res.status(201).send({transactionCréé: transactionCreated, clientSecret: paymentIntent.client_secret})
+            const transactionCreated = await transactionRepo.save(transactionRequest);
+            res.status(201).send({ transactionCréé: transactionCreated, clientSecret: paymentIntent.client_secret });
         } catch (error) {
             console.log(error);
-            res.status(500).send({ error: "Internal error" })
+            res.status(500).send({ error: "Internal error" });
         }
-    })
+    });
 
     app.delete("/transactions/:id", async (req: Request, res: Response) => {
         try {

@@ -43,7 +43,7 @@ export class ReservationUsecase {
         }
 
         if(listReservationRequest.ressource){
-            query.andWhere("reservation.idRessource = :ressource", { ressource: listReservationRequest.ressource });
+            query.andWhere("reservation.ressourceId = :ressource", { ressource: listReservationRequest.ressource });
         }
 
         if(listReservationRequest.user){

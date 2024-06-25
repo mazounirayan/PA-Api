@@ -6,14 +6,18 @@ export const createTransactionValidation = Joi.object<CreateTransactionValidatio
     emailVisiteur: Joi.string().email().required(),
     evenement: Joi.number().optional(),
     montant: Joi.number().required(),
+    methodePaiement: Joi.string().required(),
     type: Joi.string().valid(...Object.values(TypeTransaction)).required(),
-}).options({ abortEarly: false })
+    dateTransaction: Joi.date().optional()
+});
 
 export interface CreateTransactionValidationRequest {
     emailVisiteur: string
     evenement?: Evenement
     montant: number
+    methodePaiement: string
     type: TypeTransaction
+    dateTransaction?: Date
 }
 
 export const transactionIdValidation = Joi.object<TransactionIdRequest>({
@@ -29,7 +33,9 @@ export const updateTransactionValidation = Joi.object<UpdateTransactionRequest>(
     emailVisiteur: Joi.string().email().optional(),
     evenement: Joi.number().optional(),
     montant: Joi.number().optional(),
+    methodePaiement: Joi.string().optional(),
     type: Joi.string().valid(...Object.values(TypeTransaction)).optional(),
+    dateTransaction: Joi.date().optional()
 });
 
 export interface UpdateTransactionRequest {
@@ -37,7 +43,9 @@ export interface UpdateTransactionRequest {
     emailVisiteur?: string
     evenement?: Evenement
     montant?: number
+    methodePaiement?: string
     type?: TypeTransaction
+    dateTransaction?: Date
 }
 
 export const listTransactionValidation = Joi.object<ListTransactionRequest>({
@@ -46,6 +54,7 @@ export const listTransactionValidation = Joi.object<ListTransactionRequest>({
     emailVisiteur: Joi.string().email().optional(),
     evenement: Joi.number().optional(),
     montant: Joi.number().optional(),
+    methodePaiement: Joi.string().optional(),
     type: Joi.string().valid(...Object.values(TypeTransaction)).optional(),
     dateTransaction: Joi.date().optional()
 });
@@ -56,6 +65,7 @@ export interface ListTransactionRequest {
     emailVisiteur?: string
     evenement?: number
     montant?: number
+    methodePaiement?: string
     type?: TypeTransaction
     dateTransaction?: Date
 }
