@@ -13,7 +13,7 @@ import { AzureBlobServiceUsecase } from '../../domain/azureBlobService-usecase';
 
 export const AzureBlobService = (app: express.Express) => {
 
-    app.get("/getFiles/:id", authMiddlewareAll, async (req: Request, res: Response) => {
+    app.post("/getFiles/:id", authMiddlewareAll, async (req: Request, res: Response) => {
         const validationResult = userIdValidation.validate({ ...req.params, ...req.body });
 
         if (validationResult.error) {
@@ -46,7 +46,7 @@ export const AzureBlobService = (app: express.Express) => {
         }
     });
 
-    app.get("/generate-sas-url/:id", authMiddlewareAll ,async (req: Request, res: Response) => {
+    app.post("/generate-sas-url/:id", authMiddlewareAll ,async (req: Request, res: Response) => {
         const validationResult = azureBlobService.validate({ ...req.params, ...req.body });
 
         if (validationResult.error) {
