@@ -84,9 +84,9 @@ export class DossierUsecase {
 
         const entityManager = this.db.getRepository(Token);
 
-        const sqlQuery = `SELECT      d2.nom AS nom,      d2.id AS id,      'dossier' AS Type  FROM      dossier d1 INNER JOIN      dossier d2  ON      d1.dossierId = d2.id  WHERE      d1.id = ? and d1.userId = ?;`;
+        const sqlQuery = `SELECT      d2.nom AS nom,      d2.id AS id,      'dossier' AS Type  FROM      dossier d1 INNER JOIN      dossier d2  ON      d1.dossierId = d2.id  WHERE      d1.id = ? and d1.userId = ? UNION ALL SELECT 'Racine' AS nom, NULL AS id, 'racine' AS Type WHERE EXISTS (SELECT 1 FROM dossier d1 WHERE d1.id = ? AND d1.dossierId IS NULL AND d1.userId = ?);`;
 
-        const dossierParent = await entityManager.query(sqlQuery, [dossierId,id]);
+        const dossierParent = await entityManager.query(sqlQuery, [dossierId,id,dossierId,id]);
         if (!dossierParent.length) {
             return null;
         }
