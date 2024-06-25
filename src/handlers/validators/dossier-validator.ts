@@ -6,7 +6,7 @@ import { User } from "../../database/entities/user";
 
 export const createDossierValidation = Joi.object<CreateDossierValidationRequest>({
     nom: Joi.string().required(),
-    token: Joi.number().required(),
+    token: Joi.number().optional(),
     dossier: Joi.number().optional(),
     user: Joi.number().required()
 }).options({ abortEarly: false })

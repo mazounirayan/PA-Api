@@ -4,18 +4,16 @@ import { TypeTransaction } from "../../database/entities/transaction";
 
 export const createTransactionValidation = Joi.object<CreateTransactionValidationRequest>({
     emailVisiteur: Joi.string().email().required(),
-    evenement: Joi.number().required(),
+    evenement: Joi.number().optional(),
     montant: Joi.number().required(),
     type: Joi.string().valid(...Object.values(TypeTransaction)).required(),
-    dateTransaction: Joi.date().required()
 }).options({ abortEarly: false })
 
 export interface CreateTransactionValidationRequest {
     emailVisiteur: string
-    evenement: Evenement
+    evenement?: Evenement
     montant: number
     type: TypeTransaction
-    dateTransaction: Date
 }
 
 export const transactionIdValidation = Joi.object<TransactionIdRequest>({
@@ -32,7 +30,6 @@ export const updateTransactionValidation = Joi.object<UpdateTransactionRequest>(
     evenement: Joi.number().optional(),
     montant: Joi.number().optional(),
     type: Joi.string().valid(...Object.values(TypeTransaction)).optional(),
-    dateTransaction: Joi.date().optional()
 });
 
 export interface UpdateTransactionRequest {
@@ -41,7 +38,6 @@ export interface UpdateTransactionRequest {
     evenement?: Evenement
     montant?: number
     type?: TypeTransaction
-    dateTransaction?: Date
 }
 
 export const listTransactionValidation = Joi.object<ListTransactionRequest>({

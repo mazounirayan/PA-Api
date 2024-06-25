@@ -42,6 +42,7 @@ export class DemandeUsecase {
         query.leftJoinAndSelect('demande.evenementDemandes', 'evenementDemandes')
             .leftJoinAndSelect('demande.aideProjetDemandes', 'aideProjetDemandes')
             .leftJoinAndSelect('demande.parrainageDemandes', 'parrainageDemandes')
+            .leftJoinAndSelect('demande.autreDemandes', 'autreDemandes')
             .skip((listDemandeRequest.page - 1) * listDemandeRequest.limit)
             .take(listDemandeRequest.limit);
 
@@ -57,6 +58,7 @@ export class DemandeUsecase {
             .leftJoinAndSelect('demande.evenementDemandes', 'evenementDemandes')
             .leftJoinAndSelect('demande.aideProjetDemandes', 'aideProjetDemandes')
             .leftJoinAndSelect('demande.parrainageDemandes', 'parrainageDemandes')
+            .leftJoinAndSelect('demande.autreDemandes', 'autreDemandes')
             .where("demande.id = :id", { id: id });
 
         const demande = await query.getOne();
