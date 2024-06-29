@@ -25,7 +25,7 @@ export class DossierUsecase {
 
     constructor(private readonly db: DataSource) { }
 
-    async  getRacine(id: number): Promise<any | null> {
+    async getRacine(id: number): Promise<any | null> {
 
         const entityManager = this.db.getRepository(Token);
 
@@ -48,7 +48,6 @@ export class DossierUsecase {
             return null;
         }
         return racine;
-        
     }
 
     async  getArboDossier(id: number, dossierId:number): Promise<any | null> {
