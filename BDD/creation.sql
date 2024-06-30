@@ -124,7 +124,7 @@ CREATE TABLE proposition (
     id INT AUTO_INCREMENT PRIMARY KEY,
     question TEXT NOT NULL,
     type ENUM('checkbox', 'radio', 'text') NOT NULL,
-    choix TEXT NOT NULL,
+     choix TEXT[] NOT NULL,
     agId INT,
     sondageId INT,
     FOREIGN KEY (agId) REFERENCES ag(id) ON DELETE CASCADE ON UPDATE CASCADE,

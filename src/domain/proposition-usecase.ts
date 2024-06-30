@@ -8,7 +8,7 @@ export interface ListPropositionRequest {
     page: number
     limit: number
     question?: string
-    choix?: string
+    choix?: string[];
     type?: TypeProposition
     ag?: number
     sondage?: number
@@ -16,7 +16,7 @@ export interface ListPropositionRequest {
 
 export interface UpdatePropositionParams {
     question?: string
-    choix?: string
+    choix?: string[];
     type?: TypeProposition
     ag?: Ag
     sondage?: Sondage
@@ -31,8 +31,8 @@ export class PropositionUsecase {
             query.andWhere("proposition.question = :question", { question: listPropositionRequest.question });
         }
 
-        if (listPropositionRequest.choix) {
-            query.andWhere("proposition.choix = :choix", { choix: listPropositionRequest.choix });
+        if (listPropositionRequest.choix && listPropositionRequest.choix.length > 0) {
+            query.andWhere("proposition.choix IN (:...choix)", { choix: listPropositionRequest.choix });
         }
 
         if (listPropositionRequest.type) {
@@ -105,4 +105,3 @@ export class PropositionUsecase {
         return propositionUpdate;
     }
 }
-
