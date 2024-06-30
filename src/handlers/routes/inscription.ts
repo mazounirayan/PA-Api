@@ -4,6 +4,7 @@ import { Inscription } from '../../database/entities/inscription';
 import { InscriptionUsecase } from '../../domain/inscription-usecase';
 import { generateValidationErrorMessage } from '../validators/generate-validation-message';
 import { listInscriptionValidation, createInscriptionValidation, inscriptionIdValidation, updateInscriptionValidation } from '../validators/inscription-validator';
+import { EvenementUsecase } from '../../domain/evenement-usecase';
 
 
 export const InscriptionHandler = (app: express.Express) => {
@@ -35,16 +36,26 @@ export const InscriptionHandler = (app: express.Express) => {
     app.post("/inscriptions", async (req: Request, res: Response) => {
         const validation = createInscriptionValidation.validate(req.body);
 
+        
         if (validation.error) {
             res.status(400).send(generateValidationErrorMessage(validation.error.details));
             return;
         }
         const inscriptionRequest = validation.value;
 
+        const inscriptionUsecase = new InscriptionUsecase(AppDataSource);
+        const nbPlace = await inscriptionUsecase.nbPlace(+inscriptionRequest.evenement);
+        if(nbPlace[0].nbPlace == 0){
+            res.status(400).send({ error: "Plus de place disponible" });
+            return;
+        }
         const inscriptionRepo = AppDataSource.getRepository(Inscription);
 
         try {
             const inscriptionCreated = await inscriptionRepo.save(inscriptionRequest);
+            const evenementUsecase = new EvenementUsecase(AppDataSource);
+            const nbPlaceMoinsUn = await evenementUsecase.nbPlaceMoinsUn(+inscriptionRequest.evenement);
+            console.log(nbPlaceMoinsUn);
             res.status(201).send(inscriptionCreated);
         } catch (error) {
             console.log(error);

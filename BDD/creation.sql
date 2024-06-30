@@ -12,7 +12,7 @@ CREATE TABLE user (
     profession VARCHAR(255),
     numTel VARCHAR(10),
     role ENUM('Administrateur', 'Adherent') NOT NULL,
-    dateInscription DATE NOT NULL,
+    dateInscription TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     estBenevole BOOLEAN DEFAULT FALSE,
     estEnLigne BOOLEAN DEFAULT FALSE
 );
@@ -26,8 +26,9 @@ CREATE TABLE visiteur (
     adresse VARCHAR(255),
     profession VARCHAR(255),
     estBenevole BOOLEAN DEFAULT FALSE,
-    dateInscription DATE NOT NULL,
+    dateInscription TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     parrainId INT,
+    UNIQUE (email),
     FOREIGN KEY (parrainId) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -71,19 +72,19 @@ CREATE TABLE evenement (
     date DATETIME NOT NULL,
     description TEXT NOT NULL,
     lieu VARCHAR(255) NOT NULL,
-    idRessource INT,
+    ressourceId INT,
     nbPlace INT,
     estReserve BOOLEAN DEFAULT FALSE,
-    FOREIGN KEY (idRessource) REFERENCES ressource(id) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY (ressourceId) REFERENCES ressource(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE evenement_ressource (
-    idRessource INT,
-    idEvenement INT,
+    ressourceId INT,
+    evenementId INT,
     nbQuantite INT NOT NULL,
-    PRIMARY KEY (idRessource, idEvenement),
-    FOREIGN KEY (idRessource) REFERENCES ressource(id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (idEvenement) REFERENCES evenement(id) ON DELETE CASCADE ON UPDATE CASCADE
+    PRIMARY KEY (ressourceId, evenementId),
+    FOREIGN KEY (ressourceId) REFERENCES ressource(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (evenementId) REFERENCES evenement(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE inscription (
@@ -147,6 +148,7 @@ CREATE TABLE transaction (
     dateTransaction TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     emailVisiteur VARCHAR(255) NOT NULL,
     evenementId INT DEFAULT NULL,
+    methodePaiement VARCHAR(255),
     PRIMARY KEY (id),
     FOREIGN KEY (evenementId) REFERENCES evenement(id) ON DELETE CASCADE ON UPDATE CASCADE
 );

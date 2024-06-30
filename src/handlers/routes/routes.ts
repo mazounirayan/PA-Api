@@ -23,6 +23,7 @@ import { VoteHandler } from "./vote";
 import { DossierHandler } from "./dossier";
 import { AideProjetHandler } from "./aideProjet";
 import { AutreDemandeHandler } from "./autreDemande";
+import Chat from "./chat";
 
 
 export const initRoutes = (app: express.Express) => {
@@ -55,6 +56,7 @@ export const initRoutes = (app: express.Express) => {
     DossierHandler(app)
     AideProjetHandler(app)
     AutreDemandeHandler(app)
+    Chat(app)
 
 
     app.use(invalidPathHandler);

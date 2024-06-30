@@ -26,6 +26,9 @@ export class Transaction {
     @Column()
     montant: number
 
+    @Column()
+    methodePaiement: string
+
     @Column({
         type: "enum",
         enum: TypeTransaction,
@@ -36,10 +39,11 @@ export class Transaction {
     dateTransaction?:Date
     
 
-    constructor(id: number, montant:number,type:TypeTransaction,dateTransaction:Date,emailVisiteur:string,evenement:Evenement) {
+    constructor(id: number, montant:number,type:TypeTransaction,methodePaiement:string,emailVisiteur:string,evenement:Evenement) {
         this.id = id;
         this.montant = montant;
         this.type = type;
+        this.methodePaiement = methodePaiement;
         this.emailVisiteur = emailVisiteur;
         this.evenement = evenement;
     }

@@ -53,10 +53,10 @@ INSERT INTO evenement (nom, date, description, lieu, nbPlace) VALUES
 ('Gala Annuel', NOW() + INTERVAL 1 MONTH, "Le gala annuel de l\'association", 'Salle des fêtes',10),
 ("Conférence sur l\'éducation", NOW() + INTERVAL 2 MONTH, 'Conférence sur les échanges éducatifs', 'Amphithéâtre Central',15);
 
-INSERT INTO inscription (emailVisiteur, evenementId) VALUES
+/*INSERT INTO inscription (emailVisiteur, evenementId) VALUES
 ("test@gmail1.com", 1),
 ("test@gmail2.com", 1),
-("test@gmail3.com", 2);
+("test@gmail3.com", 2);*/
 
 INSERT INTO ag (nom, date, description, type, quorum) VALUES
 ('AG Annuelle 2024', NOW() + INTERVAL 3 MONTH, 'Discussion sur les bilans et projets futurs', 'Ordinaire', 15),
@@ -79,8 +79,8 @@ INSERT INTO transaction (montant, type, dateTransaction, emailVisiteur) VALUES
 (50.00, 'Cotisation', NOW(), "test@gmail.com"),
 (100.00, 'Don', NOW(), "test@gmail.com");
 
-INSERT INTO transaction (montant, type, dateTransaction, emailVisiteur, evenementId) VALUES
-(10.00, 'Inscription', NOW(),"test@gmail.com",1);
+/*INSERT INTO transaction (montant, type, dateTransaction, emailVisiteur, evenementId) VALUES
+(10.00, 'Inscription', NOW(),"test@gmail.com",1);*/
 
 
 

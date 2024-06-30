@@ -1,7 +1,6 @@
 import { DataSource } from "typeorm";
 import { Transaction, TypeTransaction } from "../database/entities/transaction";
 import { Evenement } from "../database/entities/evenement";
-import { Visiteur } from "../database/entities/visiteur";
 
 export interface ListTransactionRequest {
     page: number
@@ -9,6 +8,7 @@ export interface ListTransactionRequest {
     emailVisiteur?: string
     evenement?: number
     montant?: number
+    methodePaiement?: string
     type?: TypeTransaction
     dateTransaction?: Date
 }
@@ -17,6 +17,7 @@ export interface UpdateTransactionParams {
     emailVisiteur?: string
     evenement?: Evenement
     montant?: number
+    methodePaiement?: string
     type?: TypeTransaction
     dateTransaction?: Date
 }
@@ -36,6 +37,10 @@ export class TransactionUsecase {
 
         if (listTransactionRequest.montant) {
             query.andWhere("transaction.montant = :montant", { montant: listTransactionRequest.montant });
+        }
+
+        if (listTransactionRequest.methodePaiement) {
+            query.andWhere("transaction.methodePaiement = :methodePaiement", { methodePaiement: listTransactionRequest.methodePaiement });
         }
 
         if (listTransactionRequest.type) {
@@ -71,12 +76,12 @@ export class TransactionUsecase {
         return transaction;
     }
 
-    async updateTransaction(id: number, { emailVisiteur, evenement, montant, type, dateTransaction }: UpdateTransactionParams): Promise<Transaction | string | null> {
+    async updateTransaction(id: number, { emailVisiteur, evenement, montant, methodePaiement, type, dateTransaction }: UpdateTransactionParams): Promise<Transaction | string | null> {
         const repo = this.db.getRepository(Transaction);
         const transactionFound = await repo.findOneBy({ id });
         if (transactionFound === null) return null;
 
-        if (emailVisiteur === undefined && evenement === undefined && montant === undefined && type === undefined && dateTransaction === undefined) {
+        if (emailVisiteur === undefined && evenement === undefined && montant === undefined && methodePaiement === undefined && type === undefined && dateTransaction === undefined) {
             return "No changes";
         }
 
@@ -88,6 +93,9 @@ export class TransactionUsecase {
         }
         if (montant !== undefined) {
             transactionFound.montant = montant;
+        }
+        if (methodePaiement) {
+            transactionFound.methodePaiement = methodePaiement;
         }
         if (type) {
             transactionFound.type = type;
