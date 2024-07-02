@@ -5,7 +5,7 @@ import { Sondage } from "../../database/entities/sondage";
 
 export const createPropositionValidation = Joi.object<CreatePropositionValidationRequest>({
     question: Joi.string().required(),
-    choix: Joi.string().required(),
+    choix: Joi.array().items(Joi.string()).required(),
     type: Joi.string().valid(...Object.values(TypeProposition)).required(),
     ag: Joi.number().optional(),
     sondage: Joi.number().optional()
@@ -13,7 +13,7 @@ export const createPropositionValidation = Joi.object<CreatePropositionValidatio
 
 export interface CreatePropositionValidationRequest {
     question: string
-    choix: string
+    choix: string[]
     type: TypeProposition
     ag?: Ag
     sondage?: Sondage
@@ -30,7 +30,7 @@ export interface PropositionIdRequest {
 export const updatePropositionValidation = Joi.object<UpdatePropositionRequest>({
     id: Joi.number().required(),
     question: Joi.string().optional(),
-    choix: Joi.string().optional(),
+    choix: Joi.array().items(Joi.string()).optional(),
     type: Joi.string().valid(...Object.values(TypeProposition)).optional(),
     ag: Joi.number().optional(),
     sondage: Joi.number().optional()
@@ -39,7 +39,7 @@ export const updatePropositionValidation = Joi.object<UpdatePropositionRequest>(
 export interface UpdatePropositionRequest {
     id: number
     question?: string
-    choix?: string
+    choix?: string[]
     type?: TypeProposition
     ag?: Ag
     sondage?: Sondage
@@ -59,7 +59,7 @@ export interface ListPropositionRequest {
     page: number
     limit: number
     question?: string
-    choix?: string
+    choix?: string[]
     type?: TypeProposition
     ag?: number
     sondage?: number
