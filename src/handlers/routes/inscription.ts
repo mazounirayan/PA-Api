@@ -3,7 +3,7 @@ import { AppDataSource } from '../../database/database';
 import { Inscription } from '../../database/entities/inscription';
 import { InscriptionUsecase } from '../../domain/inscription-usecase';
 import { generateValidationErrorMessage } from '../validators/generate-validation-message';
-import { listInscriptionValidation, createInscriptionValidation, inscriptionIdValidation, updateInscriptionValidation, verifEmail } from '../validators/inscription-validator';
+import { listInscriptionValidation, createInscriptionValidation, inscriptionIdValidation, updateInscriptionValidation, verifEmail, deleteInscriptionValidationRequest } from '../validators/inscription-validator';
 import { EvenementUsecase } from '../../domain/evenement-usecase';
 
 
@@ -108,6 +108,32 @@ export const InscriptionHandler = (app: express.Express) => {
             }
 
             await inscriptionRepository.remove(inscription);
+            res.status(200).send("Inscription supprimée avec succès");
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({ error: "Internal error" });
+        }
+    });
+
+    app.post("/deleteInscriptions", async (req: Request, res: Response) => {
+        try {
+            const validationResult = deleteInscriptionValidationRequest.validate(req.body);
+
+            if (validationResult.error) {
+                res.status(400).send(generateValidationErrorMessage(validationResult.error.details));
+                return;
+            }
+            const emailVisiteur = validationResult.value.emailVisiteur;
+            const evenement = validationResult.value.evenement;
+
+            const inscriptionUsecase = new InscriptionUsecase(AppDataSource);
+            const inscription = await inscriptionUsecase.deleteInscription(emailVisiteur, evenement);
+
+            if (inscription === null) {
+                res.status(404).send({ "error": `Inscription ${emailVisiteur} not found` });
+                return;
+            }
+
             res.status(200).send("Inscription supprimée avec succès");
         } catch (error) {
             console.log(error);

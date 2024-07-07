@@ -23,7 +23,7 @@ export class InscriptionUsecase {
 
         const entityManager = this.db.getRepository(Inscription);
 
-        const sqlQuery = `delete inscriptions where emailVisiteur like ? and evenementId = ?;`;
+        const sqlQuery = `delete from inscription where emailVisiteur like ? and evenementId = ?;`;
 
         const deleteInscription = await entityManager.query(sqlQuery, [email,idEvent]);
 
