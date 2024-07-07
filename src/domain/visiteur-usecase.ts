@@ -33,6 +33,39 @@ export interface UpdateVisiteurParams {
 export class VisiteurUsecase {
     constructor(private readonly db: DataSource) { }
 
+    async verifVisiteur(email:string,numTel: string): Promise<any | null> {
+
+        const entityManager = this.db.getRepository(Visiteur);
+
+        const sqlQuery = `select count(*) from visiteur where email like ? and numTel = ?;`;
+
+        const nbPlace = await entityManager.query(sqlQuery, [email,numTel]);
+
+        return nbPlace;
+    }
+
+    async getVisiteurEmail(): Promise<any | null> {
+
+        const entityManager = this.db.getRepository(Visiteur);
+
+        const sqlQuery = `SELECT GROUP_CONCAT(email SEPARATOR ', ') AS emails FROM visiteur;`;
+
+        const visiteurEmails = await entityManager.query(sqlQuery);
+
+        return visiteurEmails;
+    }
+
+    async verifEmail(email: string): Promise<any | null> {
+
+        const entityManager = this.db.getRepository(Visiteur);
+
+        const sqlQuery = `select count(*) as verif from visiteur where email=?;`;
+
+        const verifEmail = await entityManager.query(sqlQuery, [email]);
+
+        return verifEmail;
+    }
+
     async listVisiteurs(listVisiteurRequest: ListVisiteurRequest): Promise<{ Visiteurs: Visiteur[]; totalCount: number; }> {
         const query = this.db.createQueryBuilder(Visiteur, 'visiteur');
         if (listVisiteurRequest.email) {

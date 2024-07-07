@@ -3,7 +3,7 @@ import { AppDataSource } from "../../database/database";
 import { Visiteur } from "../../database/entities/visiteur";
 import { VisiteurUsecase } from "../../domain/visiteur-usecase";
 import { generateValidationErrorMessage } from "../validators/generate-validation-message";
-import { listVisiteurValidation, createVisiteurValidation, updateVisiteurValidation, visiteurEmailValidation } from "../validators/visiteur-validator";
+import { listVisiteurValidation, createVisiteurValidation, updateVisiteurValidation, visiteurEmailValidation, verifVisiteur } from "../validators/visiteur-validator";
 
 export const VisiteurHandler = (app: express.Express) => {
     app.get("/visiteurs", async (req: Request, res: Response) => {
@@ -31,6 +31,46 @@ export const VisiteurHandler = (app: express.Express) => {
         }
     });
 
+    app.post("/verifVisiteur", async (req: Request, res: Response) => {
+
+        console.log(req.body)
+        const validation = verifVisiteur.validate(req.body);
+
+        if (validation.error) {
+            res.status(400).send(generateValidationErrorMessage(validation.error.details));
+            return;
+        }
+
+        try {
+            const visiteurUsecase = new VisiteurUsecase(AppDataSource);
+            const verifVisiteur = await visiteurUsecase.verifVisiteur(validation.value.email, validation.value.numTel)
+
+            if(verifVisiteur[0]['count(*)'] > 0){
+                res.status(200).send({ response: "Visiteur existant" });
+                return;
+            }
+            res.status(201).send({ response: "Visiteur non existant" });
+
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({ error: "Internal error" });
+        }
+    });
+
+    app.post("/visiteursEmail", async (req: Request, res: Response) => {
+
+
+        try {
+            const visiteurUsecase = new VisiteurUsecase(AppDataSource);
+            const listVisiteurEmail = await visiteurUsecase.getVisiteurEmail()
+
+            res.status(200).send(listVisiteurEmail);
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({ error: "Internal error" });
+        }
+    });
+
     app.post("/visiteurs", async (req: Request, res: Response) => {
         const validation = createVisiteurValidation.validate(req.body);
 
@@ -41,6 +81,14 @@ export const VisiteurHandler = (app: express.Express) => {
         const visiteurRequest = validation.value;
 
         const visiteurRepo = AppDataSource.getRepository(Visiteur);
+        const visiteurUsecase = new VisiteurUsecase(AppDataSource);
+
+        const emailExists = await visiteurUsecase.verifEmail(visiteurRequest.email);
+
+        if (emailExists[0].verif > 0) {
+            res.status(209).send({ "error": `Visiteur ${visiteurRequest.email} already exists` });
+            return;
+        }
 
         try {
             const visiteurCreated = await visiteurRepo.save(visiteurRequest);

@@ -3,7 +3,7 @@ import { AppDataSource } from '../../database/database';
 import { Inscription } from '../../database/entities/inscription';
 import { InscriptionUsecase } from '../../domain/inscription-usecase';
 import { generateValidationErrorMessage } from '../validators/generate-validation-message';
-import { listInscriptionValidation, createInscriptionValidation, inscriptionIdValidation, updateInscriptionValidation } from '../validators/inscription-validator';
+import { listInscriptionValidation, createInscriptionValidation, inscriptionIdValidation, updateInscriptionValidation, verifEmail } from '../validators/inscription-validator';
 import { EvenementUsecase } from '../../domain/evenement-usecase';
 
 
@@ -32,6 +32,33 @@ export const InscriptionHandler = (app: express.Express) => {
             res.status(500).send({ error: "Internal error" });
         }
     });
+
+
+    app.post("/verifEmail", async (req: Request, res: Response) => {
+
+        console.log(req.body)
+
+        const validation = verifEmail.validate(req.body);
+
+        if (validation.error) {
+            res.status(400).send(generateValidationErrorMessage(validation.error.details));
+            return;
+        }
+        
+        try {
+            const inscriptionUsecase = new InscriptionUsecase(AppDataSource);
+            const verifEmail = await inscriptionUsecase.verifEmail(validation.value.emailVisiteur, validation.value.evenement);
+            if(verifEmail[0]['count(*)'] > 0){
+                res.status(200).send({ response: "Email inscrit" });
+                return;
+            }
+            res.status(201).send({ response: "Email non inscrit" });
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({ error: "Internal error" });
+        }
+    });
+
 
     app.post("/inscriptions", async (req: Request, res: Response) => {
         const validation = createInscriptionValidation.validate(req.body);

@@ -86,3 +86,15 @@ export interface ListVisiteurRequest {
     estBenevole?: boolean
     parrain?: number
 }
+
+
+export const verifVisiteur = Joi.object<VerifVisiteur>({
+    email: Joi.string().email().required(),
+    numTel: Joi.string().required(),
+
+}).options({ abortEarly: false })
+
+export interface VerifVisiteur {
+    email: string
+    numTel: string
+}

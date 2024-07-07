@@ -2,6 +2,7 @@
 import { DataSource } from "typeorm";
 import 'dotenv/config';
 
+
 export const AppDataSource = new DataSource({
     type: process.env.TYPE as any,
     host: process.env.HOST,

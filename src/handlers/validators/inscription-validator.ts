@@ -31,6 +31,18 @@ export interface UpdateInscriptionRequest {
     evenement?: Evenement
 }
 
+
+export const verifEmail = Joi.object<VerifEmail>({
+    emailVisiteur: Joi.string().email().required(),
+    evenement: Joi.number().required()
+}).options({ abortEarly: false })
+
+export interface VerifEmail {
+    emailVisiteur: string
+    evenement: number
+}
+
+
 export const listInscriptionValidation = Joi.object<ListInscriptionRequest>({
     page: Joi.number().min(1).optional(),
     limit: Joi.number().min(1).optional(),

@@ -18,6 +18,29 @@ export interface UpdateInscriptionParams {
 export class InscriptionUsecase {
     constructor(private readonly db: DataSource) { }
 
+
+    async deleteInscription(email:string, idEvent:number): Promise<any | null> {
+
+        const entityManager = this.db.getRepository(Inscription);
+
+        const sqlQuery = `delete inscriptions where emailVisiteur like ? and evenementId = ?;`;
+
+        const deleteInscription = await entityManager.query(sqlQuery, [email,idEvent]);
+
+        return deleteInscription;
+    }
+
+    async verifEmail(email:string, id: number): Promise<any | null> {
+
+        const entityManager = this.db.getRepository(Inscription);
+
+        const sqlQuery = `select count(*) from inscription where emailVisiteur=? and evenementId=?;`;
+
+        const verifEmail = await entityManager.query(sqlQuery, [email,id]);
+
+        return verifEmail;
+    }
+
     async nbPlace(id: number): Promise<any | null> {
 
         const entityManager = this.db.getRepository(Inscription);
