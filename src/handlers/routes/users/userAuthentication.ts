@@ -8,6 +8,7 @@ import { sign } from "jsonwebtoken";
 import { Token } from "../../../database/entities/token";
 import { UserUsecase } from "../../../domain/user-usecase";
 
+
 export const UserHandlerAuthentication = (app: express.Express) => {
     app.post('/auth/signup', async (req: Request, res: Response) => {
         try {
@@ -37,9 +38,24 @@ export const UserHandlerAuthentication = (app: express.Express) => {
 
             res.status(201).send({ id: user.id,nom: user.nom,prenom:user.prenom ,email: user.email, role: user.role });
             return
-        } catch (error) {
-            console.log(error)
-            res.status(500).send({ "error": "internal error retry later" })
+        } catch (error: unknown) {
+            // Vérification de l'erreur de la base de données
+            const mysqlError = error as any;
+            if (error instanceof Error) {
+            if (mysqlError.code === 'ER_DUP_ENTRY') {
+                res.status(400).send({ error: "L'adresse email est déjà utilisée." });
+                } else {
+                    // Log de l'erreur pour le débogage
+                    console.error('Erreur interne du serveur:', error);
+    
+                    // Envoi de la réponse d'erreur générique
+                    res.status(500).send({ error: "Erreur interne du serveur. Réessayez plus tard." });
+                }
+            } else {
+                // En cas d'erreur inconnue non instance de Error
+                console.error('Erreur inconnue:', error);
+                res.status(500).send({ error: "Erreur inconnue. Réessayez plus tard." });
+            }
             return
         }
     })
@@ -142,6 +158,9 @@ export const UserHandlerAuthentication = (app: express.Express) => {
         }
     })
 
-}
 
+
+  
+
+}
 
