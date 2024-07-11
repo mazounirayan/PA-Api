@@ -42,6 +42,7 @@ export const UserHandlerAuthentication = (app: express.Express) => {
             // Vérification de l'erreur de la base de données
             const mysqlError = error as any;
             if (error instanceof Error) {
+                
             if (mysqlError.code === 'ER_DUP_ENTRY') {
                 res.status(400).send({ error: "L'adresse email est déjà utilisée." });
                 } else {
