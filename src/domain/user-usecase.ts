@@ -32,6 +32,17 @@ export interface UpdateUserParams {
 export class UserUsecase {
     constructor(private readonly db: DataSource) { }
 
+    async getUserEmail(): Promise<any | null> {
+
+        const entityManager = this.db.getRepository(User);
+
+        const sqlQuery = `SELECT GROUP_CONCAT(email SEPARATOR ', ') AS emails FROM user;`;
+
+        const visiteurEmails = await entityManager.query(sqlQuery);
+
+        return visiteurEmails;
+    }
+
 
     async deleteToken(id: number): Promise<DeleteResult> {
 

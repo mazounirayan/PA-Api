@@ -8,6 +8,20 @@ import { listUserValidation, createUserValidation, userIdValidation, updateUserV
 
 export const UserHandler = (app: express.Express) => {
 
+    app.post("/usersEmail", async (req: Request, res: Response) => {
+
+
+        try {
+            const userUsecase = new UserUsecase(AppDataSource);
+            const listUserEmail = await userUsecase.getUserEmail()
+
+            res.status(200).send(listUserEmail);
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({ error: "Internal error" });
+        }
+    });
+
     app.get("/users/blobName/:id", async (req: Request, res: Response) => {
         try {
             const validationResult = userIdValidation.validate({ ...req.params, ...req.body });
