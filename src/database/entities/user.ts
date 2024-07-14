@@ -1,17 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany, ManyToOne} from "typeorm"
-import { Token } from "./token"
-import "reflect-metadata"
-import { Transaction } from "./transaction"
-import { Tache } from "./tache"
-import { Reservation } from "./reservation"
-import { Demande } from "./demande"
-import { EvenementDemande } from "./evenementDemande"
-import { ParrainageDemande } from "./parrainageDemande"
-import { Inscription } from "./inscription"
-import { Visiteur } from "./visiteur"
-import { ParticipationAG } from "./participationAG"
-import { Vote } from "./vote"
-import { Dossier } from "./dossier"
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany } from "typeorm";
+import "reflect-metadata";
+import { Token } from "./token";
+import { Tache } from "./tache";
+import { ParrainageDemande } from "./parrainageDemande";
+import { Visiteur } from "./visiteur";
+import { ParticipationAG } from "./participationAG";
+import { Vote } from "./vote";
+import { Dossier } from "./dossier";
+import { EvenementUser } from "./evenementUser"; // Importez la nouvelle entité
 
 export enum UserRole {
     Visiteur = "Visiteur",
@@ -19,31 +15,30 @@ export enum UserRole {
     Adherent = "Adherent"
 }
 
-
 @Entity()
 export class User {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    nom: string
+    nom: string;
 
     @Column()
-    prenom: string
+    prenom: string;
 
     @Column({
         unique: true
     })
-    email: string
+    email: string;
 
     @Column()
-    motDePasse: string
+    motDePasse: string;
 
     @Column()
-    numTel: string
+    numTel: string;
 
     @Column()
-    profession: string
+    profession: string;
 
     @Column({
         type: "enum",
@@ -51,15 +46,14 @@ export class User {
     })
     role: UserRole;
 
-    @Column()
-    @CreateDateColumn({type: "datetime"})
-    dateInscription: Date
+    @CreateDateColumn({ type: "datetime" })
+    dateInscription: Date;
 
     @Column()
-    estBenevole: boolean
+    estBenevole: boolean;
 
     @Column()
-    estEnLigne: boolean
+    estEnLigne: boolean;
 
     @OneToMany(() => Tache, tache => tache.responsable)
     taches: Tache[];
@@ -82,9 +76,10 @@ export class User {
     @OneToMany(() => Dossier, dossier => dossier.user)
     dossiers: Dossier[];
 
+    @OneToMany(() => EvenementUser, evenementUser => evenementUser.user)
+    evenementUsers: EvenementUser[]; 
 
-
-    constructor(id: number, nom:string, prenom:string,email: string, numTel:string ,motDePasse: string,profession:string, role: UserRole, dateInscription:Date, estBenevole: boolean,inscriptions:Inscription[], parraine:Visiteur[],tokens: Token[], participations: ParticipationAG[],taches: Tache[], votes: Vote[], parrainageDemandes:ParrainageDemande[], dossiers: Dossier[]) {
+    constructor(id: number, nom: string, prenom: string, email: string, numTel: string, motDePasse: string, profession: string, role: UserRole, dateInscription: Date, estBenevole: boolean, taches: Tache[], parrainageDemandes: ParrainageDemande[], parraine: Visiteur[], tokens: Token[], participationsAg: ParticipationAG[], votes: Vote[], dossiers: Dossier[], evenementUsers: EvenementUser[]) {
         this.id = id;
         this.nom = nom;
         this.prenom = prenom;
@@ -94,15 +89,15 @@ export class User {
         this.dateInscription = dateInscription;
         this.estBenevole = estBenevole;
         this.numTel = numTel;
-        this.parrainageDemandes = parrainageDemandes;
-        this.profession = profession
+        this.profession = profession;
         this.estEnLigne = false;
-        this.parraine = parraine
+        this.parrainageDemandes = parrainageDemandes;
+        this.parraine = parraine;
         this.taches = taches;
         this.tokens = tokens;
-        this.participationsAg = participations;
+        this.participationsAg = participationsAg;
         this.votes = votes;
         this.dossiers = dossiers;
-
+        this.evenementUsers = evenementUsers;
     }
 }

@@ -9,7 +9,7 @@ export const createEvenementValidation = Joi.object<CreateEvenementValidationReq
     estReserve: Joi.boolean().required(),
     nbPlace: Joi.number().integer().required(),
     ressource: Joi.number().optional()
-}).options({ abortEarly: false })
+});
 
 export interface CreateEvenementValidationRequest {
     nom: string

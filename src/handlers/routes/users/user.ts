@@ -3,7 +3,7 @@ import { AppDataSource } from '../../../database/database';
 import { User } from '../../../database/entities/user';
 import { UserUsecase } from '../../../domain/user-usecase';
 import { generateValidationErrorMessage } from '../../validators/generate-validation-message';
-import { listUserValidation, createUserValidation, userIdValidation, updateUserValidation, userGetBlobValidation } from '../../validators/user-validator';
+import { listUserValidation, createUserValidation, userIdValidation, updateUserValidation} from '../../validators/user-validator';
 
 
 export const UserHandler = (app: express.Express) => {
