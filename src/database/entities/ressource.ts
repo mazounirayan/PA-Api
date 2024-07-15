@@ -1,9 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany, ManyToOne} from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany} from "typeorm"
 import "reflect-metadata"
-
-import { Reservation } from "./reservation"
-import { Evenement } from "./evenement"
 import { EvenementUser } from "./evenementUser"
+import { EvenementRessource } from "./evenementRessource"
 
 export enum TypeRessource{
     Vetement = "Vetement",
@@ -36,20 +34,20 @@ export class Ressource {
     @Column()
     emplacement: string
 
-    @OneToMany(() => Evenement, evenement => evenement.ressource)
-    evenements: Evenement[]
+    @OneToMany(() => EvenementRessource, evenementRessource => evenementRessource.ressource)
+    evenementRessources: EvenementRessource[];
 
     @OneToMany(() => EvenementUser, evenementUser => evenementUser.user)
     evenementUsers: EvenementUser[]; 
 
 
-    constructor(id: number, nom:string,type:TypeRessource,emplacement:string, quantite:number ,evenements:Evenement[], evenementUsers:EvenementUser[]){ 
+    constructor(id: number, nom:string,type:TypeRessource,emplacement:string, quantite:number ,evenementRessources:EvenementRessource[], evenementUsers:EvenementUser[]){ 
         this.id = id;
         this.nom = nom;
         this.type = type;
         this.quantite = quantite;
         this.emplacement = emplacement;
-        this.evenements = evenements;
+        this.evenementRessources = evenementRessources;
         this.evenementUsers = evenementUsers;
     }
 }

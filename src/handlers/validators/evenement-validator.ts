@@ -1,5 +1,4 @@
 import Joi from "joi";
-import { Ressource } from "../../database/entities/ressource";
 
 export const createEvenementValidation = Joi.object<CreateEvenementValidationRequest>({
     nom: Joi.string().required(),
@@ -7,8 +6,7 @@ export const createEvenementValidation = Joi.object<CreateEvenementValidationReq
     description: Joi.string().required(),
     lieu: Joi.string().required(),
     estReserve: Joi.boolean().required(),
-    nbPlace: Joi.number().integer().required(),
-    ressource: Joi.number().optional()
+    nbPlace: Joi.number().integer().required()
 });
 
 export interface CreateEvenementValidationRequest {
@@ -18,7 +16,6 @@ export interface CreateEvenementValidationRequest {
     lieu: string
     estReserve: boolean
     nbPlace: number
-    ressource?: Ressource
 }
 
 export const evenementIdValidation = Joi.object<EvenementIdRequest>({
@@ -36,8 +33,7 @@ export const updateEvenementValidation = Joi.object<UpdateEvenementRequest>({
     description: Joi.string().optional(),
     lieu: Joi.string().optional(),
     estReserve: Joi.boolean().optional(),
-    nbPlace: Joi.number().integer().optional(),
-    ressource: Joi.number().optional()
+    nbPlace: Joi.number().integer().optional()
 });
 
 export interface UpdateEvenementRequest {
@@ -48,7 +44,6 @@ export interface UpdateEvenementRequest {
     lieu?: string
     estReserve?: boolean
     nbPlace?: number
-    ressource?: Ressource
 }
 
 export const listEvenementValidation = Joi.object<ListEvenementRequest>({
@@ -59,8 +54,7 @@ export const listEvenementValidation = Joi.object<ListEvenementRequest>({
     description: Joi.string().optional(),
     lieu: Joi.string().optional(),
     estReserve: Joi.boolean().optional(),
-    nbPlace: Joi.number().integer().optional(),
-    ressource: Joi.number().optional()
+    nbPlace: Joi.number().integer().optional()
 });
 
 export interface ListEvenementRequest {
@@ -72,5 +66,4 @@ export interface ListEvenementRequest {
     lieu?: string
     estReserve?: boolean
     nbPlace?: number
-    ressource?: number
 }
