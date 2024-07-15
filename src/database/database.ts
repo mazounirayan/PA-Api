@@ -17,5 +17,10 @@ export const AppDataSource = new DataSource({
     ],
     migrations:[
        "src/database/migrations/*.ts"
-    ]
+    ],
+    ssl: {
+        rejectUnauthorized: false // Ajustez selon vos besoins de sécurité
+      },
+    "driver": require('mysql2')
+
 })

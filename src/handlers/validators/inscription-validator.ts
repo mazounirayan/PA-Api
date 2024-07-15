@@ -20,7 +20,6 @@ export interface DeleteInscriptionValidationRequest {
     emailVisiteur: string
     evenement: number
 }
-
 export const inscriptionIdValidation = Joi.object<InscriptionIdRequest>({
     id: Joi.number().required(),
 });

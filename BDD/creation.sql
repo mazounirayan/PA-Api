@@ -35,7 +35,7 @@ CREATE TABLE visiteur (
 
 CREATE TABLE fonctionnalite (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    nom VARCHAR(255) NOT NULL,
+    nom TEXT NOT NULL,
     description TEXT
 );
 
