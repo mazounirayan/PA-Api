@@ -24,6 +24,7 @@ import { DossierHandler } from "./dossier";
 import { AideProjetHandler } from "./aideProjet";
 import { AutreDemandeHandler } from "./autreDemande";
 import Chat from "./chat";
+import { EvenementUserHandler } from "./evenementUser";
 
 
 export const initRoutes = (app: express.Express) => {
@@ -57,6 +58,7 @@ export const initRoutes = (app: express.Express) => {
     AideProjetHandler(app)
     AutreDemandeHandler(app)
     Chat(app)
+    EvenementUserHandler(app)
 
 
     app.use(invalidPathHandler);

@@ -3,10 +3,24 @@ import { AppDataSource } from '../../../database/database';
 import { User } from '../../../database/entities/user';
 import { UserUsecase } from '../../../domain/user-usecase';
 import { generateValidationErrorMessage } from '../../validators/generate-validation-message';
-import { listUserValidation, createUserValidation, userIdValidation, updateUserValidation, userGetBlobValidation } from '../../validators/user-validator';
+import { listUserValidation, createUserValidation, userIdValidation, updateUserValidation} from '../../validators/user-validator';
 
 
 export const UserHandler = (app: express.Express) => {
+
+    app.post("/usersEmail", async (req: Request, res: Response) => {
+
+
+        try {
+            const userUsecase = new UserUsecase(AppDataSource);
+            const listUserEmail = await userUsecase.getUserEmail()
+
+            res.status(200).send(listUserEmail);
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({ error: "Internal error" });
+        }
+    });
 
     app.get("/users/blobName/:id", async (req: Request, res: Response) => {
         try {

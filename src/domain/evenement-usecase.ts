@@ -26,15 +26,15 @@ export interface UpdateEvenementParams {
 
 export class EvenementUsecase {
     constructor(private readonly db: DataSource) { }
-
+    
     async nbPlaceMoinsUn(id: number): Promise<any | null> {
 
         const entityManager = this.db.getRepository(Evenement);
-
+    
         const sqlQuery = `UPDATE evenement SET nbPlace = nbPlace-1 WHERE id = ?;`;
-
+    
         const nbPlaceMoinsUn = await entityManager.query(sqlQuery, [id]);
-
+    
         return nbPlaceMoinsUn;
     }
 
@@ -65,12 +65,13 @@ export class EvenementUsecase {
         }
 
         if (listEvenementRequest.ressource) {
-            query.andWhere("evenement.ressource = :ressource", { ressource: listEvenementRequest.ressource });
+            query.andWhere("evenement.ressourceId = :ressource", { ressource: listEvenementRequest.ressource });
         }
 
         query.leftJoinAndSelect('evenement.ressource', 'ressource')
             .leftJoinAndSelect('evenement.transactions', 'transactions')
             .leftJoinAndSelect('evenement.inscriptions', 'inscriptions')
+            .leftJoinAndSelect('evenement.evenementUsers', 'evenementUsers')
             .skip((listEvenementRequest.page - 1) * listEvenementRequest.limit)
             .take(listEvenementRequest.limit);
 
@@ -86,6 +87,7 @@ export class EvenementUsecase {
             .leftJoinAndSelect('evenement.ressource', 'ressource')
             .leftJoinAndSelect('evenement.transactions', 'transactions')
             .leftJoinAndSelect('evenement.inscriptions', 'inscriptions')
+            .leftJoinAndSelect('evenement.evenementUsers', 'evenementUsers')
             .where("evenement.id = :id", { id: id });
 
         const evenement = await query.getOne();

@@ -3,6 +3,7 @@ import "reflect-metadata"
 
 import { Reservation } from "./reservation"
 import { Evenement } from "./evenement"
+import { EvenementUser } from "./evenementUser"
 
 export enum TypeRessource{
     Vetement = "Vetement",
@@ -38,12 +39,17 @@ export class Ressource {
     @OneToMany(() => Evenement, evenement => evenement.ressource)
     evenements: Evenement[]
 
-    constructor(id: number, nom:string,type:TypeRessource,emplacement:string, quantite:number ,evenements:Evenement[]) {
+    @OneToMany(() => EvenementUser, evenementUser => evenementUser.user)
+    evenementUsers: EvenementUser[]; 
+
+
+    constructor(id: number, nom:string,type:TypeRessource,emplacement:string, quantite:number ,evenements:Evenement[], evenementUsers:EvenementUser[]){ 
         this.id = id;
         this.nom = nom;
         this.type = type;
         this.quantite = quantite;
         this.emplacement = emplacement;
         this.evenements = evenements;
+        this.evenementUsers = evenementUsers;
     }
 }

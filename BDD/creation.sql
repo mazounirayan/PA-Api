@@ -72,17 +72,24 @@ CREATE TABLE evenement (
     date DATETIME NOT NULL,
     description TEXT NOT NULL,
     lieu VARCHAR(255) NOT NULL,
-    ressourceId INT,
     nbPlace INT,
-    estReserve BOOLEAN DEFAULT FALSE,
-    FOREIGN KEY (ressourceId) REFERENCES ressource(id) ON DELETE CASCADE ON UPDATE CASCADE
+    estReserve BOOLEAN DEFAULT FALSE
+);
+
+CREATE TABLE evenement_user(
+    id INT AUTO_INCREMENT,                               
+    userId INT,
+    evenementId INT,
+    PRIMARY KEY (id, userId, evenementId),
+    FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (evenementId) REFERENCES evenement(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE evenement_ressource (
+    id INT AUTO_INCREMENT,                               
     ressourceId INT,
     evenementId INT,
-    nbQuantite INT NOT NULL,
-    PRIMARY KEY (ressourceId, evenementId),
+    PRIMARY KEY (id,ressourceId, evenementId), 
     FOREIGN KEY (ressourceId) REFERENCES ressource(id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (evenementId) REFERENCES evenement(id) ON DELETE CASCADE ON UPDATE CASCADE
 );

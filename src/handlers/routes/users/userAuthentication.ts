@@ -9,6 +9,7 @@ import { Token } from "../../../database/entities/token";
 import { UserUsecase } from "../../../domain/user-usecase";
 
 
+
 export const UserHandlerAuthentication = (app: express.Express) => {
     app.post('/auth/signup', async (req: Request, res: Response) => {
         try {
@@ -159,9 +160,6 @@ export const UserHandlerAuthentication = (app: express.Express) => {
         }
     })
 
-
-
-  
-
 }
+
 
