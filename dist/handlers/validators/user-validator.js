@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userGetBlobValidation = exports.LoginUserValidation = exports.listUserValidation = exports.updateUserValidation = exports.userIdValidation = exports.createUserValidation = void 0;
+exports.LoginUserValidation = exports.listUserValidation = exports.updateUserValidation = exports.userGetBlobValidation = exports.userIdValidation = exports.createUserValidation = void 0;
 const joi_1 = __importDefault(require("joi"));
 const user_1 = require("../../database/entities/user");
 exports.createUserValidation = joi_1.default.object({
@@ -11,26 +11,31 @@ exports.createUserValidation = joi_1.default.object({
     prenom: joi_1.default.string().required(),
     email: joi_1.default.string().email().required(),
     motDePasse: joi_1.default.string().required(),
-    numTel: joi_1.default.string().required(),
+    numTel: joi_1.default.string().min(10).max(10).required(),
     profession: joi_1.default.string().required(),
     role: joi_1.default.string().valid(...Object.values(user_1.UserRole)).required(),
     dateInscription: joi_1.default.date().required(),
-    estBenevole: joi_1.default.boolean().required(),
-    estEnLigne: joi_1.default.boolean().required()
+    estBenevole: joi_1.default.boolean().required()
 }).options({ abortEarly: false });
 exports.userIdValidation = joi_1.default.object({
     id: joi_1.default.number().required(),
+    token: joi_1.default.string().required()
+});
+exports.userGetBlobValidation = joi_1.default.object({
+    id: joi_1.default.number().required(),
+    token: joi_1.default.string().required(),
+    blobName: joi_1.default.string().required()
 });
 exports.updateUserValidation = joi_1.default.object({
     id: joi_1.default.number().required(),
+    token: joi_1.default.string().required(),
     nom: joi_1.default.string().optional(),
     prenom: joi_1.default.string().optional(),
     email: joi_1.default.string().email().optional(),
-    motDePasse: joi_1.default.string().optional(),
-    numTel: joi_1.default.string().optional(),
+    numTel: joi_1.default.string().min(10).max(10).optional(),
     profession: joi_1.default.string().optional(),
+    motDePasse: joi_1.default.string().optional(),
     role: joi_1.default.string().valid(...Object.values(user_1.UserRole)).optional(),
-    dateInscription: joi_1.default.date().optional(),
     estBenevole: joi_1.default.boolean().optional(),
     estEnLigne: joi_1.default.boolean().optional()
 });
@@ -39,11 +44,10 @@ exports.listUserValidation = joi_1.default.object({
     limit: joi_1.default.number().min(1).optional(),
     nom: joi_1.default.string().optional(),
     prenom: joi_1.default.string().optional(),
-    email: joi_1.default.string().email().optional(),
-    numTel: joi_1.default.string().optional(),
+    numTel: joi_1.default.string().min(10).max(10).optional(),
     profession: joi_1.default.string().optional(),
+    email: joi_1.default.string().email().optional(),
     role: joi_1.default.string().valid(...Object.values(user_1.UserRole)).optional(),
-    dateInscription: joi_1.default.date().optional(),
     estBenevole: joi_1.default.boolean().optional(),
     estEnLigne: joi_1.default.boolean().optional()
 });
@@ -51,8 +55,3 @@ exports.LoginUserValidation = joi_1.default.object({
     email: joi_1.default.string().email().required(),
     motDePasse: joi_1.default.string().required(),
 }).options({ abortEarly: false });
-exports.userGetBlobValidation = joi_1.default.object({
-    id: joi_1.default.number().required(),
-    token: joi_1.default.string().required(),
-    blobName: joi_1.default.string().required()
-});
