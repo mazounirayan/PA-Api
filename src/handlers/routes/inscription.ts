@@ -107,8 +107,6 @@ export const InscriptionHandler = (app: express.Express) => {
             }
 
             await inscriptionRepository.remove(inscription);
-            const evenementUsecase = new EvenementUsecase(AppDataSource);
-            await evenementUsecase.nbPlacePlusUn(inscription.evenement.id);
             res.status(200).send("Inscription supprimée avec succès");
         } catch (error) {
             console.log(error);
@@ -135,7 +133,10 @@ export const InscriptionHandler = (app: express.Express) => {
                 return;
             }
 
+            const evenementUsecase = new EvenementUsecase(AppDataSource);
+            await evenementUsecase.nbPlacePlusUn(evenement);
             res.status(200).send("Inscription supprimée avec succès");
+
         } catch (error) {
             console.log(error);
             res.status(500).send({ error: "Internal error" });

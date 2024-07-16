@@ -78,8 +78,7 @@ const InscriptionHandler = (app) => {
         try {
             const inscriptionCreated = yield inscriptionRepo.save(inscriptionRequest);
             const evenementUsecase = new evenement_usecase_1.EvenementUsecase(database_1.AppDataSource);
-            const nbPlaceMoinsUn = yield evenementUsecase.nbPlaceMoinsUn(+inscriptionRequest.evenement);
-            console.log(nbPlaceMoinsUn);
+            yield evenementUsecase.nbPlaceMoinsUn(+inscriptionRequest.evenement);
             res.status(201).send(inscriptionCreated);
         }
         catch (error) {
@@ -124,6 +123,8 @@ const InscriptionHandler = (app) => {
                 res.status(404).send({ "error": `Inscription ${emailVisiteur} not found` });
                 return;
             }
+            const evenementUsecase = new evenement_usecase_1.EvenementUsecase(database_1.AppDataSource);
+            yield evenementUsecase.nbPlacePlusUn(evenement);
             res.status(200).send("Inscription supprimée avec succès");
         }
         catch (error) {

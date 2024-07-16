@@ -15,6 +15,14 @@ class EvenementUsecase {
     constructor(db) {
         this.db = db;
     }
+    nbPlacePlusUn(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const entityManager = this.db.getRepository(evenement_1.Evenement);
+            const sqlQuery = `UPDATE evenement SET nbPlace = nbPlace+1 WHERE id = ?;`;
+            const nbPlacePlusUn = yield entityManager.query(sqlQuery, [id]);
+            return nbPlacePlusUn;
+        });
+    }
     nbPlaceMoinsUn(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const entityManager = this.db.getRepository(evenement_1.Evenement);
