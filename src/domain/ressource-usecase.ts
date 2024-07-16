@@ -1,6 +1,5 @@
-import {DataSource, SelectQueryBuilder } from "typeorm";
-import { Ressource, TypeRessource} from "../database/entities/ressource";
-
+import { DataSource } from "typeorm";
+import { Ressource, TypeRessource } from "../database/entities/ressource";
 
 export interface ListRessourceRequest {
     page: number
@@ -31,7 +30,7 @@ export class RessourceUsecase {
             query.andWhere("ressource.type = :type", { type: listRessourceRequest.type });
         }
 
-        if (listRessourceRequest.quantite !== undefined) {
+        if (listRessourceRequest.quantite) {
             query.andWhere("ressource.quantite = :quantite", { quantite: listRessourceRequest.quantite });
         }
 
@@ -39,7 +38,9 @@ export class RessourceUsecase {
             query.andWhere("ressource.emplacement = :emplacement", { emplacement: listRessourceRequest.emplacement });
         }
 
-        query.skip((listRessourceRequest.page - 1) * listRessourceRequest.limit)
+        query.leftJoinAndSelect('ressource.evenementRessources', 'evenementRessources')
+            .leftJoinAndSelect('ressource.evenementUsers', 'evenementUsers')
+            .skip((listRessourceRequest.page - 1) * listRessourceRequest.limit)
             .take(listRessourceRequest.limit);
 
         const [Ressources, totalCount] = await query.getManyAndCount();
@@ -51,6 +52,8 @@ export class RessourceUsecase {
 
     async getOneRessource(id: number): Promise<Ressource | null> {
         const query = this.db.createQueryBuilder(Ressource, 'ressource')
+            .leftJoinAndSelect('ressource.evenementRessources', 'evenementRessources')
+            .leftJoinAndSelect('ressource.evenementUsers', 'evenementUsers')
             .where("ressource.id = :id", { id: id });
 
         const ressource = await query.getOne();

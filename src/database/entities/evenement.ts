@@ -1,10 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany } from "typeorm";
 import "reflect-metadata";
 import { Transaction } from "./transaction";
 import { Inscription } from "./inscription";
-import { Ressource } from "./ressource";
-import { User } from "./user";
 import { EvenementUser } from "./evenementUser"; // Importez la nouvelle entité
+import { EvenementRessource } from "./evenementRessource";
 
 @Entity()
 export class Evenement {
@@ -29,8 +28,8 @@ export class Evenement {
     @Column()
     nbPlace: number;
 
-    @ManyToOne(() => Ressource, ressource => ressource.evenements)
-    ressource: Ressource;
+    @OneToMany(() => EvenementRessource, evenementRessource => evenementRessource.evenement)
+    evenementRessources: EvenementRessource[]; // Ajoutez cette relation
 
     @OneToMany(() => Transaction, transactions => transactions.evenement)
     transactions: Transaction[];
@@ -39,9 +38,9 @@ export class Evenement {
     inscriptions: Inscription[];
 
     @OneToMany(() => EvenementUser, evenementUser => evenementUser.evenement)
-    evenementUsers: EvenementUser[]; // Ajoutez cette relation
+    evenementUsers: EvenementUser[]; // Ajoutez cette relation 
 
-    constructor(id: number, nom: string, date: Date, description: string, lieu: string, transactions: Transaction[], inscriptions: Inscription[], ressource: Ressource, estReserve: boolean, nbPlace: number, evenementUsers: EvenementUser[]) {
+    constructor(id: number, nom: string, date: Date, description: string, lieu: string, transactions: Transaction[], inscriptions: Inscription[], evenementRessource: EvenementRessource[], estReserve: boolean, nbPlace: number, evenementUsers: EvenementUser[]) {
         this.id = id;
         this.nom = nom;
         this.date = date;
@@ -51,7 +50,7 @@ export class Evenement {
         this.nbPlace = nbPlace;
         this.transactions = transactions;
         this.inscriptions = inscriptions;
-        this.ressource = ressource;
+        this.evenementRessources = evenementRessource;
         this.evenementUsers = evenementUsers
     }
 }
