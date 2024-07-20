@@ -26,6 +26,18 @@ export interface UpdateEvenementParams {
 export class EvenementUsecase {
     constructor(private readonly db: DataSource) { }
 
+
+    async nbPlacePlusUn(id: number): Promise<any | null> {
+
+        const entityManager = this.db.getRepository(Evenement);
+    
+        const sqlQuery = `UPDATE evenement SET nbPlace = nbPlace+1 WHERE id = ?;`;
+    
+        const nbPlacePlusUn = await entityManager.query(sqlQuery, [id]);
+    
+        return nbPlacePlusUn;
+    }
+
     async nbPlaceMoinsUn(id: number): Promise<any | null> {
 
         const entityManager = this.db.getRepository(Evenement);

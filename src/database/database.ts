@@ -13,10 +13,14 @@ export const AppDataSource = new DataSource({
     logging: true,
     synchronize: false,
     entities:[
-        "src/database/entities/*.ts"
+        "dist/database/entities/*.js"
+        //"src/database/entities/*.ts"
+
     ],
     migrations:[
-       "src/database/migrations/*.ts"
+       "dist/database/migrations/*.js"
+       //"src/database/migrations/*.ts"
+
     ],
     ssl: {
         rejectUnauthorized: false // Ajustez selon vos besoins de sécurité

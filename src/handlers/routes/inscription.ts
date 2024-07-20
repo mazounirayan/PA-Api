@@ -81,8 +81,7 @@ export const InscriptionHandler = (app: express.Express) => {
         try {
             const inscriptionCreated = await inscriptionRepo.save(inscriptionRequest);
             const evenementUsecase = new EvenementUsecase(AppDataSource);
-            const nbPlaceMoinsUn = await evenementUsecase.nbPlaceMoinsUn(+inscriptionRequest.evenement);
-            console.log(nbPlaceMoinsUn);
+            await evenementUsecase.nbPlaceMoinsUn(+inscriptionRequest.evenement);
             res.status(201).send(inscriptionCreated);
         } catch (error) {
             console.log(error);
@@ -134,7 +133,10 @@ export const InscriptionHandler = (app: express.Express) => {
                 return;
             }
 
+            const evenementUsecase = new EvenementUsecase(AppDataSource);
+            await evenementUsecase.nbPlacePlusUn(evenement);
             res.status(200).send("Inscription supprimée avec succès");
+
         } catch (error) {
             console.log(error);
             res.status(500).send({ error: "Internal error" });
